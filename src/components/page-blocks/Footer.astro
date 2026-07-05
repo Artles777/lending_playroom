@@ -1,0 +1,39 @@
+---
+export const page = 7;
+---
+
+<footer>
+  <span class="foot-brand">PlayRoom Studio — Boutique дизайн-студия полного цикла</span>
+  <span class="foot-copy">© 2024 PlayRoom Studio</span>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .foot-brand {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .foot-copy {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 900px) {
+    footer {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+      padding: 24px;
+    }
+  }
+</style>

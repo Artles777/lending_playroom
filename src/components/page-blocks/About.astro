@@ -1,0 +1,115 @@
+---
+import expertiseIcon from '../../assets/icons/about-expertise.svg?raw';
+import deadlinesIcon from '../../assets/icons/about-deadlines.svg?raw';
+import visualizationIcon from '../../assets/icons/about-visualization.svg?raw';
+
+export const page = 3;
+---
+
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-inner reveal">
+      <div class="about-text">
+        <p class="section-eyebrow">О студии</p>
+        <h2 class="section-title">Камерная команда<br /><em>Полная ответственность</em></h2>
+        <p>PlayRoom Studio — это <strong>не&nbsp;агентство с&nbsp;потоком проектов</strong>, а&nbsp;boutique-студия с&nbsp;командой экспертов. Старший дизайнер ведёт проект лично — от&nbsp;концепции до&nbsp;передачи в&nbsp;работу строителям.</p>
+        <p>Мы&nbsp;понимаем специфику без&nbsp;лишних объяснений и&nbsp;проектируем так, чтобы пространство работало на&nbsp;бизнес каждый день.</p>
+      </div>
+      <div class="about-features">
+        <div class="about-feature">
+          <Fragment set:html={expertiseIcon} />
+          <div>
+            <div class="about-feature-title">Глубокая экспертиза</div>
+            <div class="about-feature-desc">Мы&nbsp;понимаем, как устроен игрок: грамотная планировка и&nbsp;эргономика создают среду, в&nbsp;которой гости остаются дольше — и&nbsp;возвращаются снова</div>
+          </div>
+        </div>
+        <div class="about-feature">
+          <Fragment set:html={deadlinesIcon} />
+          <div>
+            <div class="about-feature-title">Прозрачные сроки на&nbsp;каждом этапе</div>
+            <div class="about-feature-desc">Согласовываем план работ заранее и&nbsp;строго его придерживаемся — без&nbsp;неожиданных задержек и&nbsp;пересмотров.</div>
+          </div>
+        </div>
+        <div class="about-feature">
+          <Fragment set:html={visualizationIcon} />
+          <div>
+            <div class="about-feature-title">Визуализации до начала работ</div>
+            <div class="about-feature-desc">3D-визуализация — это способ не&nbsp;тратить деньги на&nbsp;переделки. Вы&nbsp;видите пространство в&nbsp;деталях до&nbsp;начала работ: свет, материалы, расстановку, атмосферу пространства.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .about-text p {
+    font-size: 18px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+
+  .about-text p strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .about-features {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .about-feature {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent);
+    border-radius: var(--radius);
+  }
+
+  :global(.about-feature-icon) {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    color: var(--accent);
+    margin-top: 2px;
+  }
+
+  .about-feature-title {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .about-feature-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 900px) {
+    .about-inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+  }
+</style>

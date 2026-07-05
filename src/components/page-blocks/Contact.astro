@@ -1,0 +1,210 @@
+---
+import emailIcon from '../../assets/icons/contact-email.svg?raw';
+
+export const page = 6;
+---
+
+<section class="contact" id="contact">
+  <div class="contact-grid-bg"></div>
+  <div class="container">
+    <div class="contact-inner">
+      <div class="reveal">
+        <p class="section-eyebrow">Контакты</p>
+        <h2 class="section-title">Готовы<br />обсудить <em>ваш&nbsp;проект</em></h2>
+        <p class="contact-intro">Расскажите задачу — мы ответим в течение нескольких часов и предложим формат работы под ваш объект.</p>
+        <div class="contact-detail">
+          <div class="contact-item">
+            <div class="contact-item-icon">
+              <Fragment set:html={emailIcon} />
+            </div>
+            <div>
+              <div class="contact-item-label">Email</div>
+              <a href="mailto:playroom.info2026@gmail.com" class="contact-item-value">playroom.info2026@gmail.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal contact-card-wrap">
+        <div class="contact-card">
+          <div class="contact-card-corner contact-card-corner-top"></div>
+          <div class="contact-card-corner contact-card-corner-bottom"></div>
+          <p class="contact-card-eyebrow">Быстрый старт</p>
+          <h3 class="contact-card-title">Первая консультация — бесплатно</h3>
+          <p class="contact-card-text">Разберём вашу задачу, предложим подход к&nbsp;планировке и&nbsp;объясним, как мы&nbsp;работаем.</p>
+          <a href="mailto:playroom.info2026@gmail.com" class="hero-cta">
+            Написать нам
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,77,28,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,77,28,0.035) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .contact-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+  }
+
+  .contact-intro {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 420px;
+    margin-top: 16px;
+  }
+
+  .contact-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-top: 48px;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .contact-item-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(255,77,28,0.25);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+
+  .contact-item-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .contact-item-value {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .contact-item-value:hover {
+    color: var(--accent);
+  }
+
+  .contact-card-wrap {
+    transition-delay: 0.15s;
+  }
+
+  .contact-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 48px;
+    position: relative;
+  }
+
+  .contact-card-corner {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+  }
+
+  .contact-card-corner-top {
+    top: 0;
+    left: 0;
+    border-top: 2px solid var(--accent);
+    border-left: 2px solid var(--accent);
+    border-top-left-radius: var(--radius);
+  }
+
+  .contact-card-corner-bottom {
+    right: 0;
+    bottom: 0;
+    border-right: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    border-bottom-right-radius: var(--radius);
+  }
+
+  .contact-card-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+
+  .contact-card-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .contact-card-text {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .contact-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 16px 36px;
+    margin-top: 40px;
+    border-radius: var(--radius);
+    transition: background 0.3s, color 0.3s;
+    display: inline-block;
+  }
+
+  .contact-cta:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  @media (max-width: 900px) {
+    .contact-inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+  }
+</style>

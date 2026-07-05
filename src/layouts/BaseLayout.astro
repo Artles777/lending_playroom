@@ -1,0 +1,47 @@
+---
+import '../styles/global.css';
+
+const { title = 'PlayRoom Studio — Boutique дизайн-студия' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+
+    <script is:inline>
+      // Scroll reveal
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach(el => observer.observe(el));
+
+      // Nav scroll effect
+      const nav = document.querySelector('nav');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 60) {
+          nav.style.borderBottomColor = 'rgba(144,144,168,0.2)';
+        } else {
+          nav.style.borderBottomColor = 'rgba(144,144,168,0.15)';
+        }
+      });
+    </script>
+  </body>
+</html>
