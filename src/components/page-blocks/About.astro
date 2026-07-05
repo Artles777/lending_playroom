@@ -11,30 +11,30 @@ export const page = 3;
     <div class="about-inner reveal">
       <div class="about-text">
         <p class="section-eyebrow">О студии</p>
-        <h2 class="section-title">Камерная команда<br /><em>Полная ответственность</em></h2>
-        <p>PlayRoom Studio — это <strong>не&nbsp;агентство с&nbsp;потоком проектов</strong>, а&nbsp;boutique-студия с&nbsp;командой экспертов. Старший дизайнер ведёт проект лично — от&nbsp;концепции до&nbsp;передачи в&nbsp;работу строителям.</p>
-        <p>Мы&nbsp;понимаем специфику без&nbsp;лишних объяснений и&nbsp;проектируем так, чтобы пространство работало на&nbsp;бизнес каждый день.</p>
+        <h2 class="section-title">Проект под ключ<br /><em>До передачи строителям</em></h2>
+        <p>PlayRoom Studio&nbsp;— это <strong>boutique-студия полного цикла</strong> для&nbsp;компьютерных клубов, лаунж-зон и&nbsp;игровых пространств. Мы&nbsp;видим проект сразу в&nbsp;двух плоскостях: как&nbsp;клуб будет выглядеть для&nbsp;гостей и&nbsp;как&nbsp;его будут реализовывать на&nbsp;стройке.</p>
+        <p><strong>Каждый объект ведёт старший дизайнер с&nbsp;опытом более 10&nbsp;лет</strong>&nbsp;— от&nbsp;планировки и&nbsp;визуальной концепции до&nbsp;рабочих чертежей. Мы&nbsp;не&nbsp;ставим проекты на&nbsp;поток, поэтому глубоко погружаемся в&nbsp;задачу и&nbsp;создаём пространство, которое выглядит эффектно, удобно работает и&nbsp;<strong>помогает клубу зарабатывать.</strong></p>
       </div>
       <div class="about-features">
         <div class="about-feature">
           <Fragment set:html={expertiseIcon} />
           <div>
-            <div class="about-feature-title">Глубокая экспертиза</div>
-            <div class="about-feature-desc">Мы&nbsp;понимаем, как устроен игрок: грамотная планировка и&nbsp;эргономика создают среду, в&nbsp;которой гости остаются дольше — и&nbsp;возвращаются снова</div>
+            <div class="about-feature-title">Планировка под&nbsp;выручку</div>
+            <div class="about-feature-desc">Продумываем посадочные места, маршруты, ресепшен, игровые зоны и&nbsp;лаунжи, чтобы&nbsp;гостям было легко ориентироваться, а&nbsp;клубу&nbsp;— зарабатывать.</div>
           </div>
         </div>
         <div class="about-feature">
           <Fragment set:html={deadlinesIcon} />
           <div>
-            <div class="about-feature-title">Прозрачные сроки на&nbsp;каждом этапе</div>
-            <div class="about-feature-desc">Согласовываем план работ заранее и&nbsp;строго его придерживаемся — без&nbsp;неожиданных задержек и&nbsp;пересмотров.</div>
+            <div class="about-feature-title">Понятный процесс без&nbsp;хаоса</div>
+            <div class="about-feature-desc">Ведём проект по&nbsp;этапам: замер, планировка, визуальная концепция, рабочие чертежи и&nbsp;комплектация.</div>
           </div>
         </div>
         <div class="about-feature">
           <Fragment set:html={visualizationIcon} />
           <div>
-            <div class="about-feature-title">Визуализации до начала работ</div>
-            <div class="about-feature-desc">3D-визуализация — это способ не&nbsp;тратить деньги на&nbsp;переделки. Вы&nbsp;видите пространство в&nbsp;деталях до&nbsp;начала работ: свет, материалы, расстановку, атмосферу пространства.</div>
+            <div class="about-feature-title">От&nbsp;3D-визуализации до&nbsp;стройки</div>
+            <div class="about-feature-desc">Передаём не&nbsp;только 3D-рендеры, но&nbsp;и&nbsp;рабочие чертежи и&nbsp;спецификации. Строительная команда получает понятную основу для&nbsp;реализации.</div>
           </div>
         </div>
       </div>
@@ -56,14 +56,18 @@ export const page = 3;
     align-items: center;
   }
 
-  .about-text p {
+  .section-title {
+    font-size: clamp(34px, 4.1vw, 50px);
+  }
+
+  .about-text p:not(.section-eyebrow) {
     font-size: 18px;
     color: var(--muted);
     line-height: 1.8;
     margin-bottom: 20px;
   }
 
-  .about-text p strong {
+  .about-text p:not(.section-eyebrow) strong {
     color: var(--text);
     font-weight: 600;
   }
@@ -94,16 +98,16 @@ export const page = 3;
   }
 
   .about-feature-title {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     letter-spacing: 0.05em;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
   }
 
   .about-feature-desc {
-    font-size: 14px;
+    font-size: 18px;
     color: var(--muted);
-    line-height: 1.6;
+    line-height: 1.8;
   }
 
   @media (max-width: 900px) {
