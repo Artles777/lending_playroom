@@ -2,10 +2,11 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "export:html": "npm run build && node scripts/export-standalone.mjs"
   },
   "dependencies": {
+    "aos": "^2.3.4",
     "astro": "^5.0.0"
-  },
-  "devDependencies": {}
+  }
 }

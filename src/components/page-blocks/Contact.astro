@@ -8,7 +8,7 @@ export const page = 6;
   <div class="contact-grid-bg"></div>
   <div class="container">
     <div class="contact-inner">
-      <div class="reveal">
+      <div data-aos="fade-up">
         <p class="section-eyebrow">Контакты</p>
         <h2 class="section-title">Готовы<br />обсудить <em>ваш&nbsp;проект</em></h2>
         <p class="contact-intro">Расскажите задачу — мы ответим в течение нескольких часов и предложим формат работы под ваш объект.</p>
@@ -24,7 +24,7 @@ export const page = 6;
           </div>
         </div>
       </div>
-      <div class="reveal contact-card-wrap">
+      <div class="contact-card-wrap" data-aos="fade-up" data-aos-delay="140">
         <div class="contact-card">
           <div class="contact-card-corner contact-card-corner-top"></div>
           <div class="contact-card-corner contact-card-corner-bottom"></div>
@@ -118,10 +118,6 @@ export const page = 6;
 
   .contact-item-value:hover {
     color: var(--accent);
-  }
-
-  .contact-card-wrap {
-    transition-delay: 0.15s;
   }
 
   .contact-card {

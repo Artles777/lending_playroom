@@ -11,7 +11,12 @@ export const page = 2;
   <div class="hero-content">
     <p class="hero-eyebrow">Boutique-студия полного цикла</p>
     <h1 class="hero-title">PlayRoom <em>Studio</em></h1>
-    <p class="hero-sub"><strong>7 дней</strong> от замера до финального чертежа</p>
+    <p class="hero-sub" data-typewriter aria-label="7 дней от замера до финального чертежа">
+      <span class="hero-sub-static"><strong>7 дней</strong> от замера до финального чертежа</span>
+      <span class="hero-sub-live" aria-hidden="true">
+        <strong data-typewriter-bold></strong><span data-typewriter-light></span><span class="hero-typewriter-caret"></span>
+      </span>
+    </p>
     <a href="#contact" class="hero-cta">
       Получить смету бесплатно
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -105,15 +110,50 @@ export const page = 2;
   }
 
   .hero-sub {
+    position: relative;
     font-size: clamp(22px, 1.8vw, 30px);
     color: rgba(255,255,255,0.68);
     margin-bottom: 50px;
     animation: fadeUp 0.9s 0.3s ease both;
   }
 
+  .hero-sub.is-typing .hero-sub-static {
+    visibility: hidden;
+  }
+
+  .hero-sub-live {
+    display: none;
+  }
+
+  .hero-sub.is-typing .hero-sub-live {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
   .hero-sub strong {
     color: var(--text);
     font-weight: 600;
+  }
+
+  .hero-typewriter-caret {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 4px;
+    background: var(--accent);
+    vertical-align: -0.12em;
+    animation: typewriterCaret 0.8s steps(1) infinite;
+  }
+
+  .hero-sub.is-typed .hero-typewriter-caret {
+    display: none;
+  }
+
+  @keyframes typewriterCaret {
+    50% {
+      opacity: 0;
+    }
   }
 
   .hero :global(.hero-cta) {
@@ -189,3 +229,39 @@ export const page = 2;
     }
   }
 </style>
+
+<script>
+  const typewriter = document.querySelector('[data-typewriter]');
+
+  if (typewriter && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const boldTarget = typewriter.querySelector('[data-typewriter-bold]');
+    const lightTarget = typewriter.querySelector('[data-typewriter-light]');
+    const boldText = '7 дней';
+    const lightText = ' от замера до финального чертежа';
+    const fullText = boldText + lightText;
+    let index = 0;
+
+    if (boldTarget && lightTarget) {
+      typewriter.classList.add('is-typing');
+
+      const typeNext = () => {
+        index += 1;
+
+        if (index <= boldText.length) {
+          boldTarget.textContent = boldText.slice(0, index);
+        } else {
+          boldTarget.textContent = boldText;
+          lightTarget.textContent = fullText.slice(boldText.length, index);
+        }
+
+        if (index < fullText.length) {
+          window.setTimeout(typeNext, 48);
+        } else {
+          typewriter.classList.add('is-typed');
+        }
+      };
+
+      window.setTimeout(typeNext, 850);
+    }
+  }
+</script>
