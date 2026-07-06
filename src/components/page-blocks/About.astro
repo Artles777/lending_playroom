@@ -10,16 +10,17 @@ export const page = 3;
   <div class="container">
     <div class="about-inner">
       <div class="about-text" data-aos="fade-up">
-        <p class="section-eyebrow">О студии</p>
-        <h2 class="section-title">Проект под ключ<br /><em>До передачи строителям</em></h2>
+        <p class="section-eyebrow">О&nbsp;студии</p>
+        <h2 class="section-title">Проект под&nbsp;ключ<br /><em>До&nbsp;передачи строителям</em></h2>
         <p>PlayRoom Studio&nbsp;— это <strong>boutique-студия полного цикла</strong> для&nbsp;компьютерных клубов, лаунж-зон и&nbsp;игровых пространств. Мы&nbsp;видим проект сразу в&nbsp;двух плоскостях: как&nbsp;клуб будет выглядеть для&nbsp;гостей и&nbsp;как&nbsp;его будут реализовывать на&nbsp;стройке.</p>
-        <p><strong>Каждый объект ведёт старший дизайнер с&nbsp;опытом более 10&nbsp;лет</strong>&nbsp;— от&nbsp;планировки и&nbsp;визуальной концепции до&nbsp;рабочих чертежей. Мы&nbsp;не&nbsp;ставим проекты на&nbsp;поток, поэтому глубоко погружаемся в&nbsp;задачу и&nbsp;создаём пространство, которое выглядит эффектно, удобно работает и&nbsp;<strong>помогает клубу зарабатывать.</strong></p>
+        <p><strong>Каждый объект ведёт старший дизайнер с&nbsp;опытом более 5&nbsp;лет</strong>&nbsp;— от&nbsp;планировки и&nbsp;визуальной концепции до&nbsp;рабочих чертежей. Мы&nbsp;не&nbsp;ставим проекты на&nbsp;поток, поэтому глубоко погружаемся в&nbsp;задачу и&nbsp;создаём пространство, которое выглядит эффектно, удобно работает и&nbsp;<strong>помогает клубу зарабатывать.</strong></p>
+        <p>Свет&nbsp;— один из&nbsp;<strong>главных материалов</strong> в&nbsp;наших проектах. С&nbsp;его помощью мы&nbsp;подчёркиваем архитектуру, добавляем пространству объём и&nbsp;динамику, выделяем игровые зоны и&nbsp;создаём атмосферу, в&nbsp;которую геймеру <strong>хочется возвращаться.</strong></p>
       </div>
       <div class="about-features">
         <div class="about-feature" data-aos="fade-up" data-aos-delay="80">
           <Fragment set:html={expertiseIcon} />
           <div>
-            <div class="about-feature-title">Планировка под&nbsp;выручку</div>
+            <div class="about-feature-title">Комфорт геймера&nbsp;— в&nbsp;приоритете</div>
             <div class="about-feature-desc">Продумываем посадочные места, маршруты, ресепшен, игровые зоны и&nbsp;лаунжи, чтобы&nbsp;гостям было легко ориентироваться, а&nbsp;клубу&nbsp;— зарабатывать.</div>
           </div>
         </div>
@@ -51,9 +52,13 @@ export const page = 3;
 
   .about-inner {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
+    grid-template-columns: 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .about-text {
+    max-width: 920px;
   }
 
   .section-title {
@@ -73,15 +78,16 @@ export const page = 3;
   }
 
   .about-features {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
   }
 
   .about-feature {
     display: flex;
     gap: 20px;
     align-items: flex-start;
+    height: 100%;
     padding: 24px;
     background: var(--card);
     border: 1px solid var(--border);
@@ -112,8 +118,11 @@ export const page = 3;
 
   @media (max-width: 900px) {
     .about-inner {
-      grid-template-columns: 1fr;
       gap: 48px;
+    }
+
+    .about-features {
+      grid-template-columns: 1fr;
     }
   }
 </style>

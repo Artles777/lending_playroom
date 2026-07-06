@@ -3,24 +3,31 @@ export const page = 7;
 ---
 
 <footer>
-  <span class="foot-brand">PlayRoom Studio — Boutique дизайн-студия полного цикла</span>
-  <span class="foot-copy">© 2024 PlayRoom Studio</span>
+  <div class="foot-main">
+    <span class="foot-brand">PlayRoom Studio — Boutique дизайн-студия полного цикла</span>
+    <span class="foot-copy">© 2024 PlayRoom Studio</span>
+  </div>
+  <p class="foot-disclaimer">
+    <sup class="foot-disclaimer-mark">*</sup>1 500 ₽/м² — стоимость, указанная для&nbsp;проектов определённой площади. Подробные условия, состав работ и&nbsp;итоговая стоимость рассчитываются индивидуально и&nbsp;фиксируются в&nbsp;коммерческом предложении и&nbsp;договоре. Информация на&nbsp;сайте носит справочный характер и&nbsp;не является публичной офертой.
+  </p>
 </footer>
 
 <style>
   footer {
     border-top: 1px solid var(--border);
     padding: 32px 48px;
+  }
+
+  .foot-main {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
   .foot-brand {
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--muted);
   }
 
   .foot-copy {
@@ -28,12 +35,42 @@ export const page = 7;
     color: var(--muted);
   }
 
+  .foot-disclaimer {
+    width: 100%;
+    margin-top: 20px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .foot-brand,
+  .foot-disclaimer {
+    color: var(--muted);
+  }
+
+  .foot-disclaimer-mark {
+    position: relative;
+    top: -0.25em;
+    margin-right: 3px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    vertical-align: baseline;
+  }
+
   @media (max-width: 900px) {
     footer {
+      padding: 24px;
+    }
+
+    .foot-main {
       flex-direction: column;
       gap: 12px;
       text-align: center;
-      padding: 24px;
+    }
+
+    .foot-disclaimer {
+      margin: 18px auto 0;
+      text-align: center;
     }
   }
 </style>

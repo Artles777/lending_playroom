@@ -11,7 +11,7 @@ export const page = 6;
       <div data-aos="fade-up">
         <p class="section-eyebrow">Контакты</p>
         <h2 class="section-title">Готовы<br />обсудить <em>ваш&nbsp;проект</em></h2>
-        <p class="contact-intro">Расскажите задачу — мы ответим в течение нескольких часов и предложим формат работы под ваш объект.</p>
+        <p class="contact-intro">Расскажите задачу — мы ответим в&nbsp;течение нескольких часов и&nbsp;предложим формат работы под&nbsp;ваш объект.</p>
         <div class="contact-detail">
           <div class="contact-item">
             <div class="contact-item-icon">
@@ -30,7 +30,7 @@ export const page = 6;
           <div class="contact-card-corner contact-card-corner-bottom"></div>
           <p class="contact-card-eyebrow">Быстрый старт</p>
           <h3 class="contact-card-title">Первая консультация — бесплатно</h3>
-          <p class="contact-card-text">Разберём вашу задачу, предложим подход к&nbsp;планировке и&nbsp;объясним, как мы&nbsp;работаем.</p>
+          <p class="contact-card-text">Разберём вашу задачу, предложим подход к&nbsp;планировке и&nbsp;объясним, как&nbsp;мы&nbsp;работаем.</p>
           <a href="mailto:playroom.info2026@gmail.com" class="hero-cta">
             Написать нам
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -151,8 +151,8 @@ export const page = 6;
   }
 
   .contact-card-eyebrow {
-    font-size: 11px;
-    letter-spacing: 0.25em;
+    font-size: 14px;
+    letter-spacing: 0.35em;
     text-transform: uppercase;
     color: var(--accent);
     margin-bottom: 24px;
@@ -168,7 +168,7 @@ export const page = 6;
 
   .contact-card-text {
     color: var(--muted);
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.7;
     margin-bottom: 32px;
   }
@@ -201,6 +201,17 @@ export const page = 6;
     .contact-inner {
       grid-template-columns: 1fr;
       gap: 48px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .contact-card :global(.hero-cta) {
+      white-space: nowrap;
+      gap: 8px;
+      font-size: clamp(10px, 3.2vw, 14px);
+      letter-spacing: clamp(0.04em, 0.35vw, 0.14em);
+      line-height: 1.2;
+      padding-inline: clamp(12px, 4vw, 28px);
     }
   }
 </style>
