@@ -13,6 +13,7 @@ type ModalCase = {
   title: string;
   categoryLabel: string;
   description: string;
+  photosUrl: string;
   images: ModalImage[];
 };
 
@@ -44,6 +45,17 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
 
     <p class="case-modal-description" data-case-modal-description></p>
     <CaseCarousel />
+    <a
+      class="case-modal-photos-link"
+      href="#"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-case-modal-photos-link
+      hidden
+    >
+      <span>Смотреть все фотографии</span>
+      <span aria-hidden="true">→</span>
+    </a>
   </aside>
 </div>
 
@@ -64,6 +76,7 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
     title: string;
     categoryLabel: string;
     description: string;
+    photosUrl: string;
     images: ClientModalImage[];
   };
 
@@ -78,6 +91,7 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
   const titleElement = document.querySelector<HTMLElement>('[data-case-modal-title]');
   const categoryElement = document.querySelector<HTMLElement>('[data-case-modal-category]');
   const descriptionElement = document.querySelector<HTMLElement>('[data-case-modal-description]');
+  const photosLink = document.querySelector<HTMLAnchorElement>('[data-case-modal-photos-link]');
   const viewport = document.querySelector<HTMLElement>('[data-case-carousel-viewport]');
   const track = document.querySelector<HTMLElement>('[data-case-carousel-track]');
   const counter = document.querySelector<HTMLElement>('[data-case-carousel-counter]');
@@ -210,6 +224,10 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
     if (titleElement) titleElement.textContent = '';
     if (categoryElement) categoryElement.textContent = '';
     if (descriptionElement) descriptionElement.textContent = '';
+    if (photosLink) {
+      photosLink.href = '#';
+      photosLink.hidden = true;
+    }
 
     if (previousFocus instanceof HTMLElement) {
       previousFocus.focus({ preventScroll: true });
@@ -290,6 +308,10 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
     titleElement.textContent = caseItem.title;
     categoryElement.textContent = caseItem.categoryLabel;
     descriptionElement.textContent = caseItem.description;
+    if (photosLink) {
+      photosLink.href = caseItem.photosUrl;
+      photosLink.hidden = !caseItem.photosUrl;
+    }
     renderImages(caseItem);
 
     modal.classList.remove('is-closing');
@@ -485,6 +507,38 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
     margin-bottom: 30px;
   }
 
+  .case-modal-photos-link {
+    display: grid;
+    grid-template-columns: minmax(80px, 1fr) auto auto;
+    align-items: center;
+    gap: 24px;
+    margin-top: clamp(24px, 4vw, 44px);
+    color: var(--accent);
+    font-size: clamp(12px, 1.1vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.25s ease;
+  }
+
+  .case-modal-photos-link::before {
+    content: '';
+    display: block;
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .case-modal-photos-link:hover,
+  .case-modal-photos-link:focus-visible {
+    color: var(--text);
+  }
+
+  .case-modal-photos-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 8px;
+  }
+
   @media (max-width: 760px) {
     .case-modal-panel {
       left: 0;
@@ -509,6 +563,16 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
       font-size: 16px;
       line-height: 1.65;
       margin-bottom: 22px;
+    }
+
+    .case-modal-photos-link {
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      letter-spacing: 0.24em;
+    }
+
+    .case-modal-photos-link::before {
+      grid-column: 1 / -1;
     }
   }
 </style>

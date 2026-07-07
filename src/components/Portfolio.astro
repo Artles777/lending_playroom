@@ -2,7 +2,9 @@
 import { getImage } from 'astro:assets';
 import CaseFolderCard from './CaseFolderCard.astro';
 import CaseModal from './CaseModal.astro';
-import { caseCategories, cases } from '@data/cases';
+import { caseCategories, casePhotosBaseUrl, cases } from '@data/cases';
+
+const encodeDiskPathSegment = (value: string) => value.trim().replaceAll(' ', '%20');
 
 const modalCases = await Promise.all(
   cases.map(async (caseItem) => ({
@@ -10,6 +12,7 @@ const modalCases = await Promise.all(
     title: caseItem.title,
     categoryLabel: caseItem.categoryLabel,
     description: caseItem.description,
+    photosUrl: `${casePhotosBaseUrl}/${encodeDiskPathSegment(caseItem.photosFolder)}`,
     images: await Promise.all(
       caseItem.images.map(async (image, index) => {
         const optimizedImage = await getImage({
