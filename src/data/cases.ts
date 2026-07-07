@@ -28,15 +28,17 @@ export const caseCategories: CaseCategoryItem[] = [
   { value: 'cyber', label: 'Киберклубы' },
 ];
 
+const goldgameCase: PortfolioCase = {
+  slug: 'goldgame',
+  title: 'Goldgame',
+  caption: 'Gold Game компьютерный клуб 89 м2',
+  category: 'cyber',
+  categoryLabel: 'Киберклубы',
+  description: 'Проект игрового пространства с приватными зонами, лаунжем, консольной комнатой и световым сценарием под атмосферу клуба.',
+  previewImages: [goldgameDuoRoom, goldgamePsRoom, loungeZone],
+  images: [goldgameDuoRoom, goldgamePsRoom, loungeZone, duoZone, kokpitSimulators],
+};
+
 export const cases: PortfolioCase[] = [
-  {
-    slug: 'goldgame',
-    title: 'Goldgame',
-    caption: 'Gold Game компьютерный клуб 89 м2',
-    category: 'cyber',
-    categoryLabel: 'Киберклубы',
-    description: 'Проект игрового пространства с приватными зонами, лаунжем, консольной комнатой и световым сценарием под атмосферу клуба.',
-    previewImages: [goldgameDuoRoom, goldgamePsRoom, loungeZone],
-    images: [goldgameDuoRoom, goldgamePsRoom, loungeZone, duoZone, kokpitSimulators],
-  },
+  goldgameCase,
 ];

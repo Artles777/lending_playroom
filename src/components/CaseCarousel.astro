@@ -97,13 +97,15 @@
     cursor: pointer;
     font-size: 28px;
     line-height: 1;
-    transition: border-color 0.25s, background 0.25s, color 0.25s;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s, color 0.25s;
   }
 
   .case-carousel-control:hover,
-  .case-carousel-control:focus-visible {
+  .case-carousel-control:focus-visible,
+  .case-carousel-control.is-direction-focus {
     border-color: var(--accent);
     background: var(--accent-dim);
+    box-shadow: 0 0 0 5px rgba(255,77,28,0.14);
     color: var(--text);
   }
 
@@ -166,11 +168,25 @@
   }
 
   @media (max-width: 640px) {
+    .case-carousel {
+      --case-carousel-gap: 16px;
+      gap: 14px;
+      margin-inline: -24px;
+      width: calc(100% + 48px);
+    }
+
+    .case-carousel-viewport {
+      padding: 2px 0 18px;
+    }
+
     .case-carousel-track :global(figure) {
-      flex-basis: min(calc(82vw + var(--case-carousel-gap)), calc(420px + var(--case-carousel-gap)));
+      flex-basis: min(calc(82vw + var(--case-carousel-gap)), calc(360px + var(--case-carousel-gap)));
+      max-width: min(calc(82vw + var(--case-carousel-gap)), calc(360px + var(--case-carousel-gap)));
     }
 
     .case-carousel-track :global(.case-carousel-slide-inner) {
+      aspect-ratio: auto;
+      height: min(44svh, 360px);
       transform: scale(0.88);
     }
 
@@ -180,6 +196,23 @@
 
     .case-carousel-track :global(figure.is-loop-after:not(.is-active) .case-carousel-slide-inner) {
       transform: translateX(var(--case-carousel-gap)) scale(0.88);
+    }
+
+    .case-carousel-controls {
+      gap: 14px;
+    }
+
+    .case-carousel-control {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .case-carousel-track :global(figure) {
+      flex-basis: calc(100vw - 48px);
+      max-width: calc(100vw - 48px);
+      padding-inline: 0;
     }
   }
 </style>

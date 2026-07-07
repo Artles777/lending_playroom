@@ -52,33 +52,48 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
 <script>
   import EmblaCarousel from 'embla-carousel';
 
-  const modalDataElement = document.querySelector('[data-case-modal-data]');
-  const modalCases = JSON.parse(modalDataElement?.textContent || '[]');
-  const caseBySlug = new Map(modalCases.map((caseItem) => [caseItem.slug, caseItem]));
+  type ClientModalImage = {
+    src: string;
+    width: number;
+    height: number;
+    alt: string;
+  };
 
-  const modal = document.querySelector('[data-case-modal]');
-  const panel = document.querySelector('[data-case-modal-panel]');
-  const overlay = document.querySelector('[data-case-modal-overlay]');
-  const closeButton = document.querySelector('[data-case-modal-close]');
-  const titleElement = document.querySelector('[data-case-modal-title]');
-  const categoryElement = document.querySelector('[data-case-modal-category]');
-  const descriptionElement = document.querySelector('[data-case-modal-description]');
-  const viewport = document.querySelector('[data-case-carousel-viewport]');
-  const track = document.querySelector('[data-case-carousel-track]');
-  const counter = document.querySelector('[data-case-carousel-counter]');
-  const previousButton = document.querySelector('[data-case-carousel-prev]');
-  const nextButton = document.querySelector('[data-case-carousel-next]');
-  const pagination = document.querySelector('[data-case-carousel-pagination]');
+  type ClientModalCase = {
+    slug: string;
+    title: string;
+    categoryLabel: string;
+    description: string;
+    images: ClientModalImage[];
+  };
 
-  let emblaApi = null;
-  let previousFocus = null;
+  const modalDataElement = document.querySelector<HTMLScriptElement>('[data-case-modal-data]');
+  const modalCases = JSON.parse(modalDataElement?.textContent || '[]') as ClientModalCase[];
+  const caseBySlug = new Map<string, ClientModalCase>(modalCases.map((caseItem) => [caseItem.slug, caseItem]));
+
+  const modal = document.querySelector<HTMLElement>('[data-case-modal]');
+  const panel = document.querySelector<HTMLElement>('[data-case-modal-panel]');
+  const overlay = document.querySelector<HTMLElement>('[data-case-modal-overlay]');
+  const closeButton = document.querySelector<HTMLButtonElement>('[data-case-modal-close]');
+  const titleElement = document.querySelector<HTMLElement>('[data-case-modal-title]');
+  const categoryElement = document.querySelector<HTMLElement>('[data-case-modal-category]');
+  const descriptionElement = document.querySelector<HTMLElement>('[data-case-modal-description]');
+  const viewport = document.querySelector<HTMLElement>('[data-case-carousel-viewport]');
+  const track = document.querySelector<HTMLElement>('[data-case-carousel-track]');
+  const counter = document.querySelector<HTMLElement>('[data-case-carousel-counter]');
+  const previousButton = document.querySelector<HTMLButtonElement>('[data-case-carousel-prev]');
+  const nextButton = document.querySelector<HTMLButtonElement>('[data-case-carousel-next]');
+  const pagination = document.querySelector<HTMLElement>('[data-case-carousel-pagination]');
+
+  let emblaApi: ReturnType<typeof EmblaCarousel> | null = null;
+  let previousFocus: HTMLElement | null = null;
   let closeTimer = 0;
 
   const isOpen = () => modal?.classList.contains('is-open');
 
-  const getFocusableElements = () => {
+  const getFocusableElements = (): HTMLElement[] => {
     if (!panel) return [];
-    return [...panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+    return [...panel.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
       .filter((element) => !element.hasAttribute('disabled') && !element.getAttribute('aria-hidden'));
   };
 
@@ -107,12 +122,41 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
     });
   };
 
-  const updateCarousel = () => {
+  const getCarouselDirection = (selectedIndex: number, previousIndex: number, count: number) => {
+    if (count <= 1 || selectedIndex === previousIndex) return 0;
+    if (previousIndex === count - 1 && selectedIndex === 0) return 1;
+    if (previousIndex === 0 && selectedIndex === count - 1) return -1;
+    return selectedIndex > previousIndex ? 1 : -1;
+  };
+
+  const clearCarouselDirectionFocus = () => {
+    previousButton?.classList.remove('is-direction-focus');
+    nextButton?.classList.remove('is-direction-focus');
+  };
+
+  const setCarouselDirectionFocus = (direction: number) => {
+    if (!isOpen() || !previousButton || !nextButton || direction === 0) return;
+
+    const button = direction < 0 ? previousButton : nextButton;
+    const focusedControl = document.activeElement === previousButton || document.activeElement === nextButton
+      ? document.activeElement
+      : null;
+
+    if (focusedControl && focusedControl !== button && focusedControl instanceof HTMLElement) {
+      focusedControl.blur();
+    }
+
+    clearCarouselDirectionFocus();
+    button.classList.add('is-direction-focus');
+  };
+
+  const updateCarousel = (shouldFocusDirection = false) => {
     if (!emblaApi || !track || !counter || !previousButton || !nextButton) return;
 
     const slides = [...track.children];
     const count = slides.length;
     const selectedIndex = emblaApi.selectedScrollSnap();
+    const previousIndex = emblaApi.previousScrollSnap();
 
     slides.forEach((slide, index) => {
       const isLoopBefore = count > 1 && selectedIndex === 0 && index === count - 1;
@@ -127,9 +171,13 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
     previousButton.disabled = count <= 1;
     nextButton.disabled = count <= 1;
     updatePagination();
+
+    if (shouldFocusDirection) {
+      setCarouselDirectionFocus(getCarouselDirection(selectedIndex, previousIndex, count));
+    }
   };
 
-  const goToSlide = (direction) => {
+  const goToSlide = (direction: number) => {
     if (!emblaApi) return;
 
     if (direction < 0) {
@@ -140,6 +188,8 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
   };
 
   const destroyCarousel = () => {
+    clearCarouselDirectionFocus();
+
     if (emblaApi) {
       emblaApi.destroy();
       emblaApi = null;
@@ -188,7 +238,7 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
       duration: 28,
     });
 
-    emblaApi.on('select', updateCarousel);
+    emblaApi.on('select', () => updateCarousel(true));
     emblaApi.on('reInit', () => {
       renderPagination();
       updateCarousel();
@@ -198,7 +248,7 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
     updateCarousel();
   };
 
-  const renderImages = (caseItem) => {
+  const renderImages = (caseItem: ClientModalCase) => {
     if (!track) return;
     track.textContent = '';
 
@@ -225,7 +275,9 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
     window.requestAnimationFrame(initCarousel);
   };
 
-  const openCase = (slug) => {
+  const openCase = (slug?: string) => {
+    if (!slug) return;
+
     const caseItem = caseBySlug.get(slug);
     if (!caseItem || !modal || !panel || !titleElement || !categoryElement || !descriptionElement) return;
 
@@ -234,7 +286,7 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
       closeTimer = 0;
     }
 
-    previousFocus = document.activeElement;
+    previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     titleElement.textContent = caseItem.title;
     categoryElement.textContent = caseItem.categoryLabel;
     descriptionElement.textContent = caseItem.description;
@@ -441,6 +493,22 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
       height: calc(100svh - 56px);
       border-inline: 0;
       border-top: 1px solid var(--border);
+      padding: 22px 24px 24px;
+    }
+
+    .case-modal-header {
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .case-modal-title {
+      font-size: clamp(34px, 10vw, 46px);
+    }
+
+    .case-modal-description {
+      font-size: 16px;
+      line-height: 1.65;
+      margin-bottom: 22px;
     }
   }
 </style>
