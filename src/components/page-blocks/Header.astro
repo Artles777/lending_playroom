@@ -29,9 +29,9 @@ export const page = 1;
     align-items: center;
     justify-content: space-between;
     padding: 7px 80px 7px 16px;
-    background: rgba(3,3,6,0.72);
+    background: rgba(3,3,6,0.84);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255,77,28,0.18);
   }
 
   .nav-logo {
@@ -43,8 +43,9 @@ export const page = 1;
     font-size: 15px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--text);
+    color: #fff;
     text-decoration: none;
+    text-shadow: 0 0 16px rgba(255,255,255,0.16), 0 0 22px rgba(255,77,28,0.14);
   }
 
   .nav-logo-mark {
@@ -52,6 +53,8 @@ export const page = 1;
     height: 70px;
     border-radius: 50%;
     display: block;
+    object-fit: cover;
+    filter: brightness(1.26) contrast(1.2) saturate(1.45) drop-shadow(0 0 12px rgba(255,77,28,0.2));
   }
 
   .nav-links {
@@ -76,7 +79,7 @@ export const page = 1;
 
   @media (max-width: 900px) {
     :global(:root) {
-      --header-height: 73px;
+      --header-height: 78px;
     }
 
     nav {
@@ -89,8 +92,8 @@ export const page = 1;
     }
 
     .nav-logo-mark {
-      width: 52px;
-      height: 52px;
+      width: 58px;
+      height: 58px;
     }
 
     .nav-links {
