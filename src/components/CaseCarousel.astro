@@ -1,0 +1,221 @@
+<div class="case-carousel" data-case-carousel>
+  <div class="case-carousel-viewport" data-case-carousel-viewport>
+    <div class="case-carousel-track" data-case-carousel-track></div>
+  </div>
+
+  <div class="case-carousel-controls">
+    <button class="case-carousel-control" type="button" data-case-carousel-prev aria-label="Предыдущее фото">‹</button>
+    <span class="case-carousel-counter" data-case-carousel-counter>1 / 1</span>
+    <button class="case-carousel-control" type="button" data-case-carousel-next aria-label="Следующее фото">›</button>
+  </div>
+
+  <div class="case-carousel-pagination" data-case-carousel-pagination aria-label="Пагинация галереи"></div>
+</div>
+
+<style>
+  .case-carousel {
+    --case-carousel-gap: clamp(18px, 3vw, 34px);
+    --case-carousel-max-height: min(60svh, 680px);
+    display: grid;
+    gap: 18px;
+    min-width: 0;
+  }
+
+  .case-carousel-viewport {
+    overflow: hidden;
+    margin-inline: 0;
+    padding: 14px 0 26px;
+  }
+
+  .case-carousel-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    will-change: transform;
+  }
+
+  .case-carousel-track :global(figure) {
+    position: relative;
+    flex: 0 0 min(calc(48vw + var(--case-carousel-gap)), calc(560px + var(--case-carousel-gap)));
+    box-sizing: border-box;
+    margin: 0;
+    max-width: calc(82vw + var(--case-carousel-gap));
+    padding-inline: calc(var(--case-carousel-gap) / 2);
+    background: transparent;
+  }
+
+  .case-carousel-track :global(.case-carousel-slide-inner) {
+    width: 100%;
+    aspect-ratio: var(--case-slide-ratio, 4 / 5);
+    max-height: var(--case-carousel-max-height);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #050509;
+    opacity: 0.42;
+    transform: scale(0.82);
+    transition: transform 0.38s ease, opacity 0.38s ease, border-color 0.38s ease, box-shadow 0.38s ease;
+  }
+
+  .case-carousel-track :global(figure.is-active .case-carousel-slide-inner) {
+    z-index: 2;
+    opacity: 1;
+    border-color: rgba(255,77,28,0.46);
+    box-shadow: 0 28px 70px rgba(0,0,0,0.42);
+    transform: scale(1);
+  }
+
+  .case-carousel-track :global(figure.is-loop-before:not(.is-active) .case-carousel-slide-inner) {
+    transform: translateX(calc(var(--case-carousel-gap) * -1)) scale(0.82);
+  }
+
+  .case-carousel-track :global(figure.is-loop-after:not(.is-active) .case-carousel-slide-inner) {
+    transform: translateX(var(--case-carousel-gap)) scale(0.82);
+  }
+
+  .case-carousel-track :global(.case-carousel-slide-inner img) {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .case-carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .case-carousel-control {
+    appearance: none;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 28px;
+    line-height: 1;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s, color 0.25s;
+  }
+
+  .case-carousel-control:hover,
+  .case-carousel-control:focus-visible,
+  .case-carousel-control.is-direction-focus {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    box-shadow: 0 0 0 5px rgba(255,77,28,0.14);
+    color: var(--text);
+  }
+
+  .case-carousel-control:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .case-carousel-control:disabled {
+    cursor: default;
+    opacity: 0.38;
+  }
+
+  .case-carousel-counter {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+
+  .case-carousel-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    min-height: 20px;
+  }
+
+  .case-carousel-pagination :global(button) {
+    appearance: none;
+    display: block;
+    width: 8px;
+    height: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.18);
+    cursor: pointer;
+    padding: 0;
+    font-size: 0;
+    line-height: 0;
+    transition: transform 0.28s ease, background 0.28s ease, border-color 0.28s ease, opacity 0.28s ease;
+  }
+
+  .case-carousel-pagination :global(button:hover),
+  .case-carousel-pagination :global(button:focus-visible) {
+    border-color: rgba(255,77,28,0.72);
+    background: rgba(255,77,28,0.42);
+  }
+
+  .case-carousel-pagination :global(button:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  .case-carousel-pagination :global(button.is-active) {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 0 0 5px rgba(255,77,28,0.16);
+    transform: scale(1.2);
+  }
+
+  @media (max-width: 640px) {
+    .case-carousel {
+      --case-carousel-gap: 16px;
+      --case-carousel-max-height: min(44svh, 360px);
+      gap: 14px;
+      margin-inline: -24px;
+      width: calc(100% + 48px);
+    }
+
+    .case-carousel-viewport {
+      padding: 2px 0 18px;
+    }
+
+    .case-carousel-track :global(figure) {
+      flex-basis: min(calc(82vw + var(--case-carousel-gap)), calc(360px + var(--case-carousel-gap)));
+      max-width: min(calc(82vw + var(--case-carousel-gap)), calc(360px + var(--case-carousel-gap)));
+    }
+
+    .case-carousel-track :global(.case-carousel-slide-inner) {
+      aspect-ratio: auto;
+      height: min(44svh, 360px);
+      transform: scale(0.88);
+    }
+
+    .case-carousel-track :global(figure.is-loop-before:not(.is-active) .case-carousel-slide-inner) {
+      transform: translateX(calc(var(--case-carousel-gap) * -1)) scale(0.88);
+    }
+
+    .case-carousel-track :global(figure.is-loop-after:not(.is-active) .case-carousel-slide-inner) {
+      transform: translateX(var(--case-carousel-gap)) scale(0.88);
+    }
+
+    .case-carousel-controls {
+      gap: 14px;
+    }
+
+    .case-carousel-control {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .case-carousel-track :global(figure) {
+      flex-basis: calc(100vw - 48px);
+      max-width: calc(100vw - 48px);
+      padding-inline: 0;
+    }
+  }
+</style>

@@ -1,0 +1,18 @@
+---
+type PageBlockModule = {
+  default: any;
+  page?: number;
+};
+
+const modules = import.meta.glob('./page-blocks/*.astro', { eager: true }) as Record<string, PageBlockModule>;
+
+const blocks = Object.entries(modules)
+  .map(([path, module]) => ({
+    Block: module.default,
+    fileName: path.split('/').pop() ?? path,
+    page: module.page ?? Number.POSITIVE_INFINITY,
+  }))
+  .sort((left, right) => left.page - right.page || left.fileName.localeCompare(right.fileName));
+---
+
+{blocks.map(({ Block }) => <Block />)}

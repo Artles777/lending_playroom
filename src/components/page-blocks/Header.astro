@@ -1,0 +1,114 @@
+---
+import logo from '@assets/images/playroom-logo.png';
+import { Image } from 'astro:assets';
+
+export const page = 1;
+---
+
+<nav>
+  <a href="#" class="nav-logo" aria-label="PlayRoom Studio">
+    <Image
+      src={logo}
+      alt=""
+      class="nav-logo-mark"
+      width={140}
+      height={140}
+      format="webp"
+      quality={82}
+      loading="eager"
+      decoding="async"
+    />
+    <span>PlayRoom Studio</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">О&nbsp;нас</a></li>
+    <li><a href="#projects">Проекты</a></li>
+    <li><a href="#reviews">Отзывы</a></li>
+    <li><a href="#contact">Контакты</a></li>
+  </ul>
+</nav>
+
+<style>
+  nav {
+    --nav-font-weight: 700;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 80px 7px 16px;
+    background: rgba(3,3,6,0.84);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,77,28,0.18);
+  }
+
+  .nav-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    font-family: var(--font-body);
+    font-weight: var(--nav-font-weight);
+    font-size: 15px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 0 0 16px rgba(255,255,255,0.16), 0 0 22px rgba(255,77,28,0.14);
+  }
+
+  .nav-logo-mark {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: block;
+    object-fit: cover;
+    filter: brightness(1.26) contrast(1.2) saturate(1.45) drop-shadow(0 0 12px rgba(255,77,28,0.2));
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 46px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    font-weight: var(--nav-font-weight);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.92);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+  }
+
+  @media (max-width: 900px) {
+    :global(:root) {
+      --header-height: 78px;
+    }
+
+    nav {
+      padding: 10px 24px;
+    }
+
+    .nav-logo {
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .nav-logo-mark {
+      width: 58px;
+      height: 58px;
+    }
+
+    .nav-links {
+      display: none;
+    }
+  }
+</style>

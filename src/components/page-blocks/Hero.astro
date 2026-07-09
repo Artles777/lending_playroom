@@ -1,0 +1,304 @@
+---
+import heroImage from '@assets/images/hero-interior.png';
+import { Image } from 'astro:assets';
+
+export const page = 2;
+---
+
+<section class="hero" id="home">
+  <div class="hero-media">
+    <Image
+      src={heroImage}
+      alt="Интерьер компьютерного клуба PlayRoom Studio"
+      width={1122}
+      height={1402}
+      format="webp"
+      quality={78}
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Boutique-студия полного цикла</p>
+    <h1 class="hero-title">PlayRoom <em>Studio</em></h1>
+    <p class="hero-sub" data-typewriter aria-label="1500 ₽/м² — минимальная стоимость проекта*">
+      <span class="hero-sub-static"><strong>1500 ₽/м²</strong> — минимальная стоимость проекта<sup class="hero-sub-note">*</sup></span>
+      <span class="hero-sub-live" aria-hidden="true">
+        <strong data-typewriter-bold></strong><span data-typewriter-light></span><sup class="hero-sub-note">*</sup><span class="hero-typewriter-caret"></span>
+      </span>
+    </p>
+    <a href="#contact" class="hero-cta">
+      Получить смету бесплатно
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+    </a>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">30<span>+</span></div>
+        <div class="hero-stat-label">Реализованных проектов</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">5</div>
+        <div class="hero-stat-label">Лет на&nbsp;рынке</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">100<span>%</span></div>
+        <div class="hero-stat-label">Проекты сданы в&nbsp;срок</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    padding: 128px 5.4vw 72px;
+    background: #030306;
+  }
+
+  .hero-media {
+    position: absolute;
+    top: var(--header-height);
+    right: 0;
+    bottom: 0;
+    width: 58%;
+  }
+
+  .hero-media::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(90deg, #030306 0%, rgba(3,3,6,0.82) 18%, rgba(3,3,6,0.28) 42%, rgba(3,3,6,0) 62%);
+  }
+
+  .hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: min(50vw, 820px);
+    padding-top: 24px;
+  }
+
+  .hero-eyebrow {
+    font-size: 14px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    animation: fadeUp 0.9s 0.1s ease both;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(62px, 6.4vw, 106px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 30px;
+    white-space: nowrap;
+    animation: fadeUp 0.9s 0.15s ease both;
+  }
+
+  .hero-title em {
+    color: var(--accent);
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .hero-sub {
+    position: relative;
+    font-size: clamp(22px, 1.8vw, 30px);
+    color: rgba(255,255,255,0.68);
+    margin-bottom: 50px;
+    animation: fadeUp 0.9s 0.3s ease both;
+  }
+
+  .hero-sub.is-typing .hero-sub-static {
+    visibility: hidden;
+  }
+
+  .hero-sub-live {
+    display: none;
+  }
+
+  .hero-sub.is-typing .hero-sub-live {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  .hero-sub strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .hero-sub-note {
+    font-size: 0.72em;
+    line-height: 0;
+    margin-left: 2px;
+    vertical-align: super;
+  }
+
+  .hero-sub-live .hero-sub-note {
+    display: none;
+  }
+
+  .hero-sub.is-typed .hero-sub-live .hero-sub-note {
+    display: inline;
+  }
+
+  .hero-typewriter-caret {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 4px;
+    background: var(--accent);
+    vertical-align: -0.12em;
+    animation: typewriterCaret 0.8s steps(1) infinite;
+  }
+
+  .hero-sub.is-typed .hero-typewriter-caret {
+    display: none;
+  }
+
+  @keyframes typewriterCaret {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .hero :global(.hero-cta) {
+    min-width: 416px;
+    justify-content: center;
+  }
+
+  .hero-stats {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(56px, 7vw, 118px);
+    margin-top: clamp(80px, 9vh, 118px);
+    animation: fadeUp 0.9s 0.5s ease both;
+  }
+
+  .hero-stat-num {
+    font-family: var(--font-display);
+    font-size: clamp(44px, 4vw, 62px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .hero-stat-num span {
+    color: var(--accent);
+  }
+
+  .hero-stat-label {
+    max-width: 190px;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.82);
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .hero {
+      padding: 112px 24px 64px;
+      min-height: 100svh;
+    }
+
+    .hero-media {
+      left: 0;
+      width: 100%;
+      opacity: 0.58;
+    }
+
+    .hero-media::before {
+      background: linear-gradient(90deg, rgba(3,3,6,0.95) 0%, rgba(3,3,6,0.72) 56%, rgba(3,3,6,0.45) 100%);
+    }
+
+    .hero-content {
+      width: 100%;
+      padding-top: 0;
+    }
+
+    .hero-title {
+      white-space: normal;
+    }
+
+    .hero :global(.hero-cta) {
+      min-width: 0;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .hero-stats {
+      gap: 36px;
+      flex-wrap: wrap;
+      margin-top: 64px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero :global(.hero-cta) {
+      white-space: nowrap;
+      gap: 8px;
+      font-size: clamp(10px, 3.2vw, 14px);
+      letter-spacing: clamp(0.04em, 0.35vw, 0.14em);
+      line-height: 1.2;
+      padding-inline: clamp(12px, 4vw, 28px);
+    }
+  }
+</style>
+
+<script>
+  const typewriter = document.querySelector('[data-typewriter]');
+
+  if (typewriter && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const boldTarget = typewriter.querySelector('[data-typewriter-bold]');
+    const lightTarget = typewriter.querySelector('[data-typewriter-light]');
+    const boldText = '1500 ₽/м²';
+    const lightText = ' — минимальная стоимость проекта';
+    const fullText = boldText + lightText;
+    let index = 0;
+
+    if (boldTarget && lightTarget) {
+      typewriter.classList.add('is-typing');
+
+      const typeNext = () => {
+        index += 1;
+
+        if (index <= boldText.length) {
+          boldTarget.textContent = boldText.slice(0, index);
+        } else {
+          boldTarget.textContent = boldText;
+          lightTarget.textContent = fullText.slice(boldText.length, index);
+        }
+
+        if (index < fullText.length) {
+          window.setTimeout(typeNext, 48);
+        } else {
+          typewriter.classList.add('is-typed');
+        }
+      };
+
+      window.setTimeout(typeNext, 850);
+    }
+  }
+</script>

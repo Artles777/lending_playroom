@@ -1,0 +1,578 @@
+---
+import CaseCarousel from './CaseCarousel.astro';
+
+type ModalImage = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+};
+
+type ModalCase = {
+  slug: string;
+  title: string;
+  categoryLabel: string;
+  description: string;
+  photosUrl: string;
+  images: ModalImage[];
+};
+
+type Props = {
+  cases: ModalCase[];
+};
+
+const { cases } = Astro.props;
+const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
+---
+
+<div class="case-modal" data-case-modal aria-hidden="true">
+  <div class="case-modal-overlay" data-case-modal-overlay></div>
+  <aside
+    class="case-modal-panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="case-modal-title"
+    tabindex="-1"
+    data-case-modal-panel
+  >
+    <div class="case-modal-header">
+      <div>
+        <p class="case-modal-category" data-case-modal-category></p>
+        <h3 class="case-modal-title" id="case-modal-title" data-case-modal-title></h3>
+      </div>
+      <button class="case-modal-close" type="button" data-case-modal-close aria-label="Закрыть кейс">×</button>
+    </div>
+
+    <p class="case-modal-description" data-case-modal-description></p>
+    <CaseCarousel />
+    <a
+      class="case-modal-photos-link"
+      href="#"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-case-modal-photos-link
+      hidden
+    >
+      <span>Смотреть все фотографии</span>
+      <span aria-hidden="true">→</span>
+    </a>
+  </aside>
+</div>
+
+<script is:inline type="application/json" data-case-modal-data set:html={casesJson} />
+
+<script>
+  import EmblaCarousel from 'embla-carousel';
+
+  type ClientModalImage = {
+    src: string;
+    width: number;
+    height: number;
+    alt: string;
+  };
+
+  type ClientModalCase = {
+    slug: string;
+    title: string;
+    categoryLabel: string;
+    description: string;
+    photosUrl: string;
+    images: ClientModalImage[];
+  };
+
+  const modalDataElement = document.querySelector<HTMLScriptElement>('[data-case-modal-data]');
+  const modalCases = JSON.parse(modalDataElement?.textContent || '[]') as ClientModalCase[];
+  const caseBySlug = new Map<string, ClientModalCase>(modalCases.map((caseItem) => [caseItem.slug, caseItem]));
+
+  const modal = document.querySelector<HTMLElement>('[data-case-modal]');
+  const panel = document.querySelector<HTMLElement>('[data-case-modal-panel]');
+  const overlay = document.querySelector<HTMLElement>('[data-case-modal-overlay]');
+  const closeButton = document.querySelector<HTMLButtonElement>('[data-case-modal-close]');
+  const titleElement = document.querySelector<HTMLElement>('[data-case-modal-title]');
+  const categoryElement = document.querySelector<HTMLElement>('[data-case-modal-category]');
+  const descriptionElement = document.querySelector<HTMLElement>('[data-case-modal-description]');
+  const photosLink = document.querySelector<HTMLAnchorElement>('[data-case-modal-photos-link]');
+  const viewport = document.querySelector<HTMLElement>('[data-case-carousel-viewport]');
+  const track = document.querySelector<HTMLElement>('[data-case-carousel-track]');
+  const counter = document.querySelector<HTMLElement>('[data-case-carousel-counter]');
+  const previousButton = document.querySelector<HTMLButtonElement>('[data-case-carousel-prev]');
+  const nextButton = document.querySelector<HTMLButtonElement>('[data-case-carousel-next]');
+  const pagination = document.querySelector<HTMLElement>('[data-case-carousel-pagination]');
+
+  let emblaApi: ReturnType<typeof EmblaCarousel> | null = null;
+  let previousFocus: HTMLElement | null = null;
+  let closeTimer = 0;
+
+  const isOpen = () => modal?.classList.contains('is-open');
+
+  const getFocusableElements = (): HTMLElement[] => {
+    if (!panel) return [];
+    return [...panel.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+      .filter((element) => !element.hasAttribute('disabled') && !element.getAttribute('aria-hidden'));
+  };
+
+  const renderPagination = () => {
+    if (!emblaApi || !pagination) return;
+
+    pagination.textContent = '';
+
+    emblaApi.scrollSnapList().forEach((_, index) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.setAttribute('aria-label', `Открыть фото ${index + 1}`);
+      dot.addEventListener('click', () => emblaApi?.scrollTo(index));
+      pagination.append(dot);
+    });
+  };
+
+  const updatePagination = () => {
+    if (!emblaApi || !pagination) return;
+
+    const selectedIndex = emblaApi.selectedScrollSnap();
+
+    [...pagination.children].forEach((dot, index) => {
+      dot.classList.toggle('is-active', index === selectedIndex);
+      dot.setAttribute('aria-current', index === selectedIndex ? 'true' : 'false');
+    });
+  };
+
+  const getCarouselDirection = (selectedIndex: number, previousIndex: number, count: number) => {
+    if (count <= 1 || selectedIndex === previousIndex) return 0;
+    if (previousIndex === count - 1 && selectedIndex === 0) return 1;
+    if (previousIndex === 0 && selectedIndex === count - 1) return -1;
+    return selectedIndex > previousIndex ? 1 : -1;
+  };
+
+  const clearCarouselDirectionFocus = () => {
+    previousButton?.classList.remove('is-direction-focus');
+    nextButton?.classList.remove('is-direction-focus');
+  };
+
+  const setCarouselDirectionFocus = (direction: number) => {
+    if (!isOpen() || !previousButton || !nextButton || direction === 0) return;
+
+    const button = direction < 0 ? previousButton : nextButton;
+    const focusedControl = document.activeElement === previousButton || document.activeElement === nextButton
+      ? document.activeElement
+      : null;
+
+    if (focusedControl && focusedControl !== button && focusedControl instanceof HTMLElement) {
+      focusedControl.blur();
+    }
+
+    clearCarouselDirectionFocus();
+    button.classList.add('is-direction-focus');
+  };
+
+  const updateCarousel = (shouldFocusDirection = false) => {
+    if (!emblaApi || !track || !counter || !previousButton || !nextButton) return;
+
+    const slides = [...track.children];
+    const count = slides.length;
+    const selectedIndex = emblaApi.selectedScrollSnap();
+    const previousIndex = emblaApi.previousScrollSnap();
+
+    slides.forEach((slide, index) => {
+      const isLoopBefore = count > 1 && selectedIndex === 0 && index === count - 1;
+      const isLoopAfter = count > 1 && selectedIndex === count - 1 && index === 0;
+
+      slide.classList.toggle('is-active', index === selectedIndex);
+      slide.classList.toggle('is-loop-before', isLoopBefore);
+      slide.classList.toggle('is-loop-after', isLoopAfter);
+    });
+
+    counter.textContent = count > 0 ? `${selectedIndex + 1} / ${count}` : '0 / 0';
+    previousButton.disabled = count <= 1;
+    nextButton.disabled = count <= 1;
+    updatePagination();
+
+    if (shouldFocusDirection) {
+      setCarouselDirectionFocus(getCarouselDirection(selectedIndex, previousIndex, count));
+    }
+  };
+
+  const goToSlide = (direction: number) => {
+    if (!emblaApi) return;
+
+    if (direction < 0) {
+      emblaApi.scrollPrev();
+    } else {
+      emblaApi.scrollNext();
+    }
+  };
+
+  const destroyCarousel = () => {
+    clearCarouselDirectionFocus();
+
+    if (emblaApi) {
+      emblaApi.destroy();
+      emblaApi = null;
+    }
+
+    if (pagination) pagination.textContent = '';
+  };
+
+  const finishClose = () => {
+    if (!modal?.classList.contains('is-closing')) return;
+
+    modal.classList.remove('is-closing');
+    document.documentElement.classList.remove('case-modal-open');
+
+    destroyCarousel();
+
+    if (track) track.textContent = '';
+    if (titleElement) titleElement.textContent = '';
+    if (categoryElement) categoryElement.textContent = '';
+    if (descriptionElement) descriptionElement.textContent = '';
+    if (photosLink) {
+      photosLink.href = '#';
+      photosLink.hidden = true;
+    }
+
+    if (previousFocus instanceof HTMLElement) {
+      previousFocus.focus({ preventScroll: true });
+    }
+
+    previousFocus = null;
+
+    if (closeTimer) {
+      window.clearTimeout(closeTimer);
+      closeTimer = 0;
+    }
+  };
+
+  const initCarousel = () => {
+    if (!viewport || !track) return;
+
+    destroyCarousel();
+
+    const slideCount = track.children.length;
+
+    emblaApi = EmblaCarousel(viewport, {
+      align: 'center',
+      containScroll: false,
+      loop: slideCount > 1,
+      skipSnaps: false,
+      duration: 28,
+    });
+
+    emblaApi.on('select', () => updateCarousel(true));
+    emblaApi.on('reInit', () => {
+      renderPagination();
+      updateCarousel();
+    });
+
+    renderPagination();
+    updateCarousel();
+  };
+
+  const renderImages = (caseItem: ClientModalCase) => {
+    if (!track) return;
+    track.textContent = '';
+
+    caseItem.images.forEach((image, index) => {
+      const figure = document.createElement('figure');
+      const frame = document.createElement('div');
+      const img = document.createElement('img');
+
+      figure.className = 'case-carousel-slide';
+      figure.style.setProperty('--case-slide-ratio', `${image.width} / ${image.height}`);
+      frame.className = 'case-carousel-slide-inner';
+      img.src = image.src;
+      img.alt = image.alt;
+      img.width = image.width;
+      img.height = image.height;
+      img.loading = index === 0 ? 'eager' : 'lazy';
+      img.decoding = 'async';
+
+      frame.append(img);
+      figure.append(frame);
+      track.append(figure);
+    });
+
+    window.requestAnimationFrame(initCarousel);
+  };
+
+  const openCase = (slug?: string) => {
+    if (!slug) return;
+
+    const caseItem = caseBySlug.get(slug);
+    if (!caseItem || !modal || !panel || !titleElement || !categoryElement || !descriptionElement) return;
+
+    if (closeTimer) {
+      window.clearTimeout(closeTimer);
+      closeTimer = 0;
+    }
+
+    previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    titleElement.textContent = caseItem.title;
+    categoryElement.textContent = caseItem.categoryLabel;
+    descriptionElement.textContent = caseItem.description;
+    if (photosLink) {
+      photosLink.href = caseItem.photosUrl;
+      photosLink.hidden = !caseItem.photosUrl;
+    }
+    renderImages(caseItem);
+
+    modal.classList.remove('is-closing');
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('case-modal-open');
+    closeButton?.focus({ preventScroll: true });
+    window.requestAnimationFrame(() => emblaApi?.reInit());
+  };
+
+  const closeCase = () => {
+    if (!modal || !modal.classList.contains('is-open') || modal.classList.contains('is-closing')) return;
+
+    modal.classList.remove('is-open');
+    modal.classList.add('is-closing');
+    modal.setAttribute('aria-hidden', 'true');
+    closeTimer = window.setTimeout(finishClose, 380);
+  };
+
+  document.addEventListener('click', (event) => {
+    const card = event.target instanceof Element ? event.target.closest('[data-case-card]') : null;
+    if (card instanceof HTMLElement) {
+      openCase(card.dataset.caseSlug);
+    }
+  });
+
+  overlay?.addEventListener('click', closeCase);
+  closeButton?.addEventListener('click', closeCase);
+  previousButton?.addEventListener('click', () => goToSlide(-1));
+  nextButton?.addEventListener('click', () => goToSlide(1));
+  window.addEventListener('resize', () => emblaApi?.reInit());
+  panel?.addEventListener('transitionend', (event) => {
+    if (event.target === panel && event.propertyName === 'transform') {
+      finishClose();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (!isOpen()) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeCase();
+    }
+
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      goToSlide(-1);
+    }
+
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      goToSlide(1);
+    }
+
+    if (event.key === 'Tab') {
+      const focusableElements = getFocusableElements();
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (!firstElement || !lastElement) return;
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    }
+  });
+</script>
+
+<style>
+  :global(html.case-modal-open),
+  :global(html.case-modal-open body) {
+    overflow: hidden;
+  }
+
+  .case-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .case-modal.is-open,
+  .case-modal.is-closing {
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .case-modal.is-closing {
+    pointer-events: none;
+  }
+
+  .case-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(3,3,6,0.74);
+    opacity: 0;
+    transition: opacity 0.28s ease;
+  }
+
+  .case-modal.is-open .case-modal-overlay {
+    opacity: 1;
+  }
+
+  .case-modal-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: calc(100svh - 72px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-inline: 0;
+    border-bottom: 0;
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 -28px 90px rgba(0,0,0,0.5);
+    padding: clamp(24px, 3.2vw, 42px);
+    transform: translateY(100%);
+    transition: transform 0.32s ease;
+  }
+
+  .case-modal-panel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .case-modal.is-open .case-modal-panel {
+    transform: translateY(0);
+  }
+
+  .case-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+
+  .case-modal-category {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .case-modal-title {
+    font-family: var(--font-display);
+    font-size: clamp(34px, 4vw, 54px);
+    line-height: 1.04;
+  }
+
+  .case-modal-close {
+    appearance: none;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 30px;
+    line-height: 1;
+    transition: border-color 0.25s, background 0.25s;
+  }
+
+  .case-modal-close:hover,
+  .case-modal-close:focus-visible {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .case-modal-close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .case-modal-description {
+    max-width: 760px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+  }
+
+  .case-modal-photos-link {
+    display: grid;
+    grid-template-columns: minmax(80px, 1fr) auto auto;
+    align-items: center;
+    gap: 24px;
+    margin-top: clamp(24px, 4vw, 44px);
+    color: var(--accent);
+    font-size: clamp(12px, 1.1vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.25s ease;
+  }
+
+  .case-modal-photos-link::before {
+    content: '';
+    display: block;
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .case-modal-photos-link:hover,
+  .case-modal-photos-link:focus-visible {
+    color: var(--text);
+  }
+
+  .case-modal-photos-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 8px;
+  }
+
+  @media (max-width: 760px) {
+    .case-modal-panel {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: calc(100svh - 56px);
+      border-inline: 0;
+      border-top: 1px solid var(--border);
+      padding: 22px 24px 24px;
+    }
+
+    .case-modal-header {
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .case-modal-title {
+      font-size: clamp(34px, 10vw, 46px);
+    }
+
+    .case-modal-description {
+      font-size: 16px;
+      line-height: 1.65;
+      margin-bottom: 22px;
+    }
+
+    .case-modal-photos-link {
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      letter-spacing: 0.24em;
+    }
+
+    .case-modal-photos-link::before {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
