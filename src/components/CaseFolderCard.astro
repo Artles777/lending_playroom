@@ -4,12 +4,10 @@ import type { PortfolioCase } from '@data/cases';
 
 type Props = {
   caseItem: PortfolioCase;
-  index: number;
 };
 
-const { caseItem, index } = Astro.props;
+const { caseItem } = Astro.props;
 const [frontImage, middleImage, backImage] = caseItem.previewImages;
-const loading = index < 2 ? 'eager' : 'lazy';
 const captionMatch = caseItem.caption.match(/^(.*?)(м)2$/);
 ---
 
@@ -24,16 +22,16 @@ const captionMatch = caseItem.caption.match(/^(.*?)(м)2$/);
   <span class="case-folder-stack" aria-hidden="true">
     {backImage && (
       <span class="case-folder-layer case-folder-layer-back">
-        <Image src={backImage} alt="" width={560} loading="lazy" decoding="async" />
+        <Image src={backImage} alt="" width={460} format="webp" quality={72} loading="lazy" decoding="async" />
       </span>
     )}
     {middleImage && (
       <span class="case-folder-layer case-folder-layer-middle">
-        <Image src={middleImage} alt="" width={600} loading="lazy" decoding="async" />
+        <Image src={middleImage} alt="" width={520} format="webp" quality={72} loading="lazy" decoding="async" />
       </span>
     )}
     <span class="case-folder-layer case-folder-layer-front">
-      <Image src={frontImage} alt="" width={680} loading={loading} decoding="async" />
+      <Image src={frontImage} alt="" width={620} format="webp" quality={72} loading="lazy" decoding="async" />
     </span>
   </span>
   <span class="case-folder-caption">
