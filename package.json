@@ -2,10 +2,18 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "check": "astro check",
+    "preview": "astro preview",
+    "export:html": "npm run build && node scripts/export-standalone.mjs"
   },
   "dependencies": {
-    "astro": "^5.0.0"
+    "aos": "^2.3.4",
+    "astro": "^5.0.0",
+    "embla-carousel": "^8.6.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/aos": "^3.0.8",
+    "typescript": "^5.9.3"
+  }
 }

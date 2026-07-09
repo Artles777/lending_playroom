@@ -1,0 +1,546 @@
+---
+import { getImage } from 'astro:assets';
+import CaseFolderCard from './CaseFolderCard.astro';
+import CaseModal from './CaseModal.astro';
+import { caseCategories, casePhotosBaseUrl, cases } from '@data/cases';
+
+const encodeDiskPathSegment = (value: string) => value.trim().replaceAll(' ', '%20');
+
+const modalCases = await Promise.all(
+  cases.map(async (caseItem) => ({
+    slug: caseItem.slug,
+    title: caseItem.title,
+    categoryLabel: caseItem.categoryLabel,
+    description: caseItem.description,
+    photosUrl: `${casePhotosBaseUrl}/${encodeDiskPathSegment(caseItem.photosFolder)}`,
+    images: await Promise.all(
+      caseItem.images.map(async (image, index) => {
+        const optimizedImage = await getImage({
+          src: image,
+          width: 1400,
+          format: 'webp',
+        });
+
+        return {
+          src: optimizedImage.src,
+          width: Number(optimizedImage.attributes.width),
+          height: Number(optimizedImage.attributes.height),
+          alt: `${caseItem.title} — фото ${index + 1}`,
+        };
+      }),
+    ),
+  })),
+);
+---
+
+<section id="projects" class="portfolio" data-portfolio>
+  <div class="container">
+    <div data-aos="fade-up">
+      <p class="section-eyebrow">Портфолио</p>
+      <h2 class="section-title">Проекты,<br />которыми мы&nbsp;<em>гордимся</em></h2>
+    </div>
+
+    <div class="portfolio-tabs" role="tablist" aria-label="Тематики кейсов" data-aos="fade-up" data-aos-delay="80">
+      {caseCategories.map((category, index) => (
+        <button
+          class="portfolio-tab"
+          type="button"
+          role="tab"
+          data-portfolio-tab
+          data-category={category.value}
+          aria-selected={index === 0 ? 'true' : 'false'}
+        >
+          {category.label}
+        </button>
+      ))}
+    </div>
+
+    <div class="portfolio-gallery" data-portfolio-gallery>
+      <button class="portfolio-arrow portfolio-arrow-prev" type="button" data-portfolio-prev aria-label="Предыдущие кейсы">
+        ‹
+      </button>
+
+      <div class="portfolio-viewport">
+        <div class="portfolio-grid" data-portfolio-grid>
+          {cases.map((caseItem, index) => (
+            <div class="portfolio-slide" data-case-slide data-case-category={caseItem.category}>
+              <CaseFolderCard caseItem={caseItem} index={index} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button class="portfolio-arrow portfolio-arrow-next" type="button" data-portfolio-next aria-label="Следующие кейсы">
+        ›
+      </button>
+    </div>
+
+    <p class="portfolio-empty" data-portfolio-empty hidden>В&nbsp;этой категории кейсов пока нет.</p>
+  </div>
+
+  <CaseModal cases={modalCases} />
+</section>
+
+<script>
+  const portfolios = document.querySelectorAll<HTMLElement>('[data-portfolio]');
+
+  portfolios.forEach((portfolio) => {
+    const tabs = [...portfolio.querySelectorAll<HTMLButtonElement>('[data-portfolio-tab]')];
+    const slides = [...portfolio.querySelectorAll<HTMLElement>('[data-case-slide]')];
+    const track = portfolio.querySelector<HTMLElement>('[data-portfolio-grid]');
+    const gallery = portfolio.querySelector<HTMLElement>('[data-portfolio-gallery]');
+    const previousButton = portfolio.querySelector<HTMLButtonElement>('[data-portfolio-prev]');
+    const nextButton = portfolio.querySelector<HTMLButtonElement>('[data-portfolio-next]');
+    const empty = portfolio.querySelector<HTMLElement>('[data-portfolio-empty]');
+    const mobileDragQuery = window.matchMedia('(max-width: 640px)');
+    let isPointerDragging = false;
+    let hasPointerDragIntent = false;
+    let suppressPointerClick = false;
+    let pointerDragStartX = 0;
+    let pointerDragStartY = 0;
+    let pointerDragStartScrollLeft = 0;
+    let wheelScrollTimer = 0;
+
+    const clearPortfolioDirectionFocus = () => {
+      previousButton?.classList.remove('is-direction-focus');
+      nextButton?.classList.remove('is-direction-focus');
+    };
+
+    const setPortfolioDirectionFocus = (direction: number) => {
+      if (!previousButton || !nextButton || direction === 0) return;
+
+      const button = direction < 0 ? previousButton : nextButton;
+      if (button.disabled) return;
+      const focusedArrow = document.activeElement === previousButton || document.activeElement === nextButton
+        ? document.activeElement
+        : null;
+
+      if (focusedArrow && focusedArrow !== button && focusedArrow instanceof HTMLElement) {
+        focusedArrow.blur();
+      }
+
+      clearPortfolioDirectionFocus();
+      button.classList.add('is-direction-focus');
+    };
+
+    const updateGalleryControls = () => {
+      if (!track || !gallery || !previousButton || !nextButton) return;
+
+      const isScrollable = track.scrollWidth > track.clientWidth + 1;
+      gallery.classList.toggle('is-scrollable', isScrollable);
+      previousButton.disabled = !isScrollable || track.scrollLeft <= 1;
+      nextButton.disabled = !isScrollable || track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+
+      if (!isScrollable) {
+        clearPortfolioDirectionFocus();
+      }
+    };
+
+    const scrollGallery = (direction: number) => {
+      if (!track) return;
+
+      const firstVisibleSlide = slides.find((slide) => !slide.hidden);
+      const slideWidth = firstVisibleSlide?.getBoundingClientRect().width || track.clientWidth;
+      const styles = window.getComputedStyle(track);
+      const gap = Number.parseFloat(styles.columnGap || styles.gap || '0') || 0;
+
+      setPortfolioDirectionFocus(direction);
+
+      track.scrollBy({
+        left: direction * (slideWidth + gap),
+        behavior: 'smooth',
+      });
+    };
+
+    const handleGalleryWheel = (event: WheelEvent) => {
+      if (!track) return;
+
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      if (maxScroll <= 1) return;
+
+      const rawDelta = event.deltaX || (event.shiftKey ? event.deltaY : 0);
+      if (!rawDelta) return;
+
+      const deltaUnit = event.deltaMode === 1 ? 40 : event.deltaMode === 2 ? track.clientWidth : 1;
+      const delta = rawDelta * deltaUnit;
+
+      const nextScroll = Math.min(maxScroll, Math.max(0, track.scrollLeft + delta));
+      if (nextScroll === track.scrollLeft) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      setPortfolioDirectionFocus(Math.sign(delta));
+      track.classList.add('is-wheel-scrolling');
+      window.clearTimeout(wheelScrollTimer);
+      wheelScrollTimer = window.setTimeout(() => {
+        track.classList.remove('is-wheel-scrolling');
+      }, 180);
+      track.scrollLeft = nextScroll;
+      updateGalleryControls();
+    };
+
+    const stopPointerDrag = (event?: PointerEvent) => {
+      if (!track || !isPointerDragging) return;
+
+      if (event && track.hasPointerCapture?.(event.pointerId)) {
+        try {
+          track.releasePointerCapture(event.pointerId);
+        } catch {
+          // Pointer capture can already be gone after native cancellation.
+        }
+      }
+
+      isPointerDragging = false;
+      hasPointerDragIntent = false;
+      track.classList.remove('is-dragging');
+
+      if (suppressPointerClick) {
+        window.setTimeout(() => {
+          suppressPointerClick = false;
+        }, 120);
+      }
+    };
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!track || !mobileDragQuery.matches || event.button !== 0) return;
+
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      if (maxScroll <= 1) return;
+
+      isPointerDragging = true;
+      hasPointerDragIntent = false;
+      suppressPointerClick = false;
+      pointerDragStartX = event.clientX;
+      pointerDragStartY = event.clientY;
+      pointerDragStartScrollLeft = track.scrollLeft;
+      try {
+        track.setPointerCapture?.(event.pointerId);
+      } catch {
+        // Synthetic or cancelled pointer events may not be capturable.
+      }
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!track || !isPointerDragging) return;
+
+      const deltaX = event.clientX - pointerDragStartX;
+      const deltaY = event.clientY - pointerDragStartY;
+
+      if (!hasPointerDragIntent) {
+        if (Math.abs(deltaX) <= 8 && Math.abs(deltaY) <= 8) return;
+
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+          stopPointerDrag(event);
+          return;
+        }
+
+        hasPointerDragIntent = true;
+        suppressPointerClick = true;
+        track.classList.add('is-dragging');
+      }
+
+      const nextScrollLeft = pointerDragStartScrollLeft - deltaX;
+      const scrollDirection = Math.sign(nextScrollLeft - track.scrollLeft);
+
+      setPortfolioDirectionFocus(scrollDirection);
+      track.scrollLeft = nextScrollLeft;
+      updateGalleryControls();
+      event.preventDefault();
+    };
+
+    const handlePointerClick = (event: MouseEvent) => {
+      if (!suppressPointerClick) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    const setActiveCategory = (category = '') => {
+      let visibleCount = 0;
+
+      tabs.forEach((tab) => {
+        const isActive = tab.dataset.category === category;
+        tab.setAttribute('aria-selected', String(isActive));
+      });
+
+      slides.forEach((slide) => {
+        const isVisible = slide.dataset.caseCategory === category;
+        slide.hidden = !isVisible;
+
+        if (isVisible) {
+          visibleCount += 1;
+        }
+      });
+
+      if (empty) {
+        empty.hidden = visibleCount > 0;
+      }
+
+      clearPortfolioDirectionFocus();
+      track?.scrollTo({ left: 0 });
+      window.requestAnimationFrame(updateGalleryControls);
+    };
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => setActiveCategory(tab.dataset.category));
+    });
+
+    const activeTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true') || tabs[0];
+
+    if (activeTab) {
+      setActiveCategory(activeTab.dataset.category);
+    }
+
+    previousButton?.addEventListener('click', () => scrollGallery(-1));
+    nextButton?.addEventListener('click', () => scrollGallery(1));
+    gallery?.addEventListener('wheel', handleGalleryWheel, { passive: false, capture: true });
+    track?.addEventListener('wheel', handleGalleryWheel, { passive: false, capture: true });
+    track?.addEventListener('pointerdown', handlePointerDown);
+    track?.addEventListener('pointermove', handlePointerMove);
+    track?.addEventListener('pointerup', stopPointerDrag);
+    track?.addEventListener('pointercancel', stopPointerDrag);
+    track?.addEventListener('lostpointercapture', stopPointerDrag);
+    track?.addEventListener('click', handlePointerClick, true);
+    track?.addEventListener('scroll', updateGalleryControls, { passive: true });
+    window.addEventListener('resize', updateGalleryControls);
+    updateGalleryControls();
+  });
+</script>
+
+<style>
+  .portfolio {
+    position: relative;
+    overflow-x: clip;
+  }
+
+  .portfolio-tabs {
+    display: flex;
+    gap: 10px;
+    margin-top: 34px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+
+  .portfolio-tab {
+    appearance: none;
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.03);
+    color: var(--muted);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    line-height: 1.2;
+    padding: 13px 18px;
+    text-transform: uppercase;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
+    white-space: nowrap;
+  }
+
+  .portfolio-tab:hover {
+    border-color: rgba(255,77,28,0.48);
+    color: var(--text);
+  }
+
+  .portfolio-tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .portfolio-tab[aria-selected="true"] {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    color: var(--text);
+  }
+
+  .portfolio-gallery {
+    position: relative;
+    margin-top: 48px;
+  }
+
+  .portfolio-viewport {
+    overflow: hidden;
+    margin-inline: -16px;
+    padding-inline: 16px;
+  }
+
+  .portfolio-grid {
+    display: flex;
+    gap: 34px;
+    overflow-x: auto;
+    padding: 16px 0 14px;
+    scroll-behavior: smooth;
+    scroll-padding-inline: 0;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .portfolio-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .portfolio-grid.is-wheel-scrolling {
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+  }
+
+  .portfolio-slide {
+    flex: 0 0 calc((100% - 68px) / 3);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .portfolio-arrow {
+    appearance: none;
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    display: none;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(20,20,30,0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 16px 34px rgba(0,0,0,0.35);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0;
+    line-height: 0;
+    transform: translateY(-50%);
+    transition: background 0.25s, border-color 0.25s, box-shadow 0.25s, opacity 0.25s, transform 0.25s;
+  }
+
+  .portfolio-arrow::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 11px;
+    height: 11px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+  }
+
+  .portfolio-gallery.is-scrollable .portfolio-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .portfolio-arrow-prev {
+    left: calc(clamp(56px, 7vw, 96px) * -1);
+  }
+
+  .portfolio-arrow-prev::before {
+    transform: translate(-42%, -50%) rotate(135deg);
+  }
+
+  .portfolio-arrow-next {
+    right: calc(clamp(56px, 7vw, 96px) * -1);
+  }
+
+  .portfolio-arrow-next::before {
+    transform: translate(-58%, -50%) rotate(-45deg);
+  }
+
+  .portfolio-arrow:hover,
+  .portfolio-arrow:focus-visible,
+  .portfolio-arrow.is-direction-focus {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+    box-shadow: 0 16px 34px rgba(0,0,0,0.35), 0 0 0 5px rgba(255,77,28,0.14);
+    transform: translateY(-50%) scale(1.04);
+  }
+
+  .portfolio-arrow:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .portfolio-arrow:disabled {
+    cursor: default;
+    opacity: 0.36;
+  }
+
+  .portfolio-empty {
+    margin-top: 48px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 1020px) {
+    .portfolio-slide {
+      flex-basis: calc((100% - 34px) / 2);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .portfolio-tabs {
+      margin-inline: -24px;
+      padding-inline: 24px;
+    }
+
+    .portfolio-gallery {
+      margin-inline: -24px;
+    }
+
+    .portfolio-viewport {
+      margin-inline: 0;
+      padding-inline: 24px;
+    }
+
+    .portfolio-grid {
+      gap: 24px;
+      cursor: grab;
+      touch-action: pan-y;
+    }
+
+    .portfolio-grid.is-dragging {
+      cursor: grabbing;
+      scroll-behavior: auto;
+      scroll-snap-type: none;
+    }
+
+    .portfolio-grid :global(img) {
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+
+    .portfolio-slide {
+      flex-basis: min(82vw, 360px);
+    }
+
+    .portfolio-arrow {
+      top: 50%;
+      width: 40px;
+      height: 40px;
+      transform: translateY(-50%);
+    }
+
+    .portfolio-arrow::before {
+      width: 9px;
+      height: 9px;
+    }
+
+    .portfolio-arrow-prev {
+      left: 10px;
+    }
+
+    .portfolio-arrow-next {
+      right: 10px;
+    }
+
+    .portfolio-arrow:hover,
+    .portfolio-arrow:focus-visible,
+    .portfolio-arrow.is-direction-focus {
+      transform: translateY(-50%) scale(1.04);
+    }
+  }
+</style>

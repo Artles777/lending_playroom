@@ -10,6 +10,7 @@
   --muted: #B4B4CC;
   --border: rgba(144,144,168,0.15);
   --radius: 6px;
+  --header-height: 85px;
   --font-display: 'Playfair Display', Georgia, serif;
   --font-body: 'Nunito', Arial, sans-serif;
 }
@@ -36,7 +37,7 @@ section {
 }
 
 .section-eyebrow {
-  font-size: 11px;
+  font-size: 14px;
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: var(--accent);
@@ -64,8 +65,8 @@ section {
   background: var(--accent);
   color: #fff;
   font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   text-decoration: none;
@@ -73,26 +74,28 @@ section {
   position: relative;
   z-index: 1;
   border-radius: var(--radius);
-  transition: background 0.3s, transform 0.3s;
+  scale: 1;
+  translate: 0 0;
+  transition: background 0.3s, scale 0.3s, translate 0.3s;
   animation: fadeUp 0.9s 0.4s ease both;
 }
 
-.hero-cta:hover { background: #e03d10; transform: translateY(-2px); }
+.hero-cta:hover { background: #e03d10; scale: 1.04; translate: 0 -2px; }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.reveal {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (max-width: 900px) {
