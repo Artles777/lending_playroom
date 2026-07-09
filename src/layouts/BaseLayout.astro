@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import 'aos/dist/aos.css';
+import Analytics from '@vercel/analytics/astro';
 
 const { title = 'PlayRoom Studio — Boutique дизайн-студия' } = Astro.props;
 ---
@@ -25,6 +26,7 @@ const { title = 'PlayRoom Studio — Boutique дизайн-студия' } = Ast
   </head>
   <body>
     <slot />
+    <Analytics />
 
     <script>
       import AOS from 'aos';
