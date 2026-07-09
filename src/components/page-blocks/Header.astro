@@ -1,12 +1,23 @@
 ---
 import logo from '@assets/images/playroom-logo.png';
+import { Image } from 'astro:assets';
 
 export const page = 1;
 ---
 
 <nav>
   <a href="#" class="nav-logo" aria-label="PlayRoom Studio">
-    <img src={logo.src} alt="" class="nav-logo-mark" />
+    <Image
+      src={logo}
+      alt=""
+      class="nav-logo-mark"
+      width={140}
+      height={140}
+      format="webp"
+      quality={82}
+      loading="eager"
+      decoding="async"
+    />
     <span>PlayRoom Studio</span>
   </a>
   <ul class="nav-links">
