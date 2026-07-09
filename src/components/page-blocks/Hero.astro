@@ -1,12 +1,23 @@
 ---
 import heroImage from '@assets/images/hero-interior.png';
+import { Image } from 'astro:assets';
 
 export const page = 2;
 ---
 
 <section class="hero" id="home">
   <div class="hero-media">
-    <img src={heroImage.src} alt="Интерьер компьютерного клуба PlayRoom Studio" />
+    <Image
+      src={heroImage}
+      alt="Интерьер компьютерного клуба PlayRoom Studio"
+      width={1122}
+      height={1402}
+      format="webp"
+      quality={78}
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
   </div>
   <div class="hero-content">
     <p class="hero-eyebrow">Boutique-студия полного цикла</p>
