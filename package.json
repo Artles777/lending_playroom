@@ -2,6 +2,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "check": "astro check",
     "preview": "astro preview",
     "export:html": "npm run build && node scripts/export-standalone.mjs"
   },
@@ -9,5 +10,10 @@
     "aos": "^2.3.4",
     "astro": "^5.0.0",
     "embla-carousel": "^8.6.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/aos": "^3.0.8",
+    "typescript": "^5.9.3"
   }
 }

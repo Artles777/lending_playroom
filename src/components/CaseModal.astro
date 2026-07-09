@@ -59,7 +59,7 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
   </aside>
 </div>
 
-<script type="application/json" data-case-modal-data set:html={casesJson} />
+<script is:inline type="application/json" data-case-modal-data set:html={casesJson} />
 
 <script>
   import EmblaCarousel from 'embla-carousel';

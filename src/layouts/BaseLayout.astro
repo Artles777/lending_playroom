@@ -38,14 +38,16 @@ const { title = 'PlayRoom Studio — Boutique дизайн-студия' } = Ast
       });
 
       // Nav scroll effect
-      const nav = document.querySelector('nav');
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 60) {
-          nav.style.borderBottomColor = 'rgba(144,144,168,0.2)';
-        } else {
-          nav.style.borderBottomColor = 'rgba(144,144,168,0.15)';
-        }
-      });
+      const nav = document.querySelector<HTMLElement>('nav');
+      if (nav) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 60) {
+            nav.style.borderBottomColor = 'rgba(144,144,168,0.2)';
+          } else {
+            nav.style.borderBottomColor = 'rgba(144,144,168,0.15)';
+          }
+        });
+      }
     </script>
   </body>
 </html>
