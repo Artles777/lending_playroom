@@ -5,6 +5,7 @@ import CaseModal from './CaseModal.astro';
 import { caseCategories, casePhotosBaseUrl, cases } from '@data/cases';
 
 const encodeDiskPathSegment = (value: string) => value.trim().replaceAll(' ', '%20');
+const initialCategory = caseCategories[0]?.value;
 
 const modalCases = await Promise.all(
   cases.map(async (caseItem) => ({
@@ -17,8 +18,9 @@ const modalCases = await Promise.all(
       caseItem.images.map(async (image, index) => {
         const optimizedImage = await getImage({
           src: image,
-          width: 1400,
+          width: 1120,
           format: 'webp',
+          quality: 72,
         });
 
         return {
@@ -62,9 +64,14 @@ const modalCases = await Promise.all(
 
       <div class="portfolio-viewport">
         <div class="portfolio-grid" data-portfolio-grid>
-          {cases.map((caseItem, index) => (
-            <div class="portfolio-slide" data-case-slide data-case-category={caseItem.category}>
-              <CaseFolderCard caseItem={caseItem} index={index} />
+          {cases.map((caseItem) => (
+            <div
+              class="portfolio-slide"
+              data-case-slide
+              data-case-category={caseItem.category}
+              hidden={caseItem.category !== initialCategory}
+            >
+              <CaseFolderCard caseItem={caseItem} />
             </div>
           ))}
         </div>
