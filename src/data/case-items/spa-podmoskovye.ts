@@ -11,7 +11,7 @@ const spaPodmoskovyeCase: PortfolioCase = {
   caption: 'SPA-комплекс Подмосковье',
   category: 'spa',
   categoryLabel: 'SPA-комплексы',
-  description: 'Проект SPA-комплекса с выразительной фактурой камня, теплым светом и камерной атмосферой для спокойного отдыха.',
+  description: 'Первый СПА-проект для наших заказчиков, концепция — минимализм и эстетика «тихой роскоши». Основной материал — натуральный травертин, задающий ощущение природности и спокойствия. Чистые линии и тактильные фактуры вместо избыточного декора. Интерьер вне трендов, который останется актуальным долгие годы.',
   photosFolder: 'СПА комплекс подмосковье',
   previewImages: [spaPodmoskovye11, spaPodmoskovye5, spaPodmoskovye8],
   images: [spaPodmoskovye11, spaPodmoskovye5, spaPodmoskovye8, spaPodmoskovye1],
