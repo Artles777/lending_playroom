@@ -8,7 +8,7 @@ import type { PortfolioCase } from '../case-types';
 const iventCase: PortfolioCase = {
   slug: 'ivent',
   sortOrder: 20,
-  title: 'ИВЕНТ',
+  title: 'Ивент-пространство — 252 м²',
   caption: 'ИВЕНТ компьютерный клуб',
   category: 'cyber',
   categoryLabel: 'Киберклубы',

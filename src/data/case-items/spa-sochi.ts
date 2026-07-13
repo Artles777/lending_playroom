@@ -8,7 +8,7 @@ import type { PortfolioCase } from '../case-types';
 const spaSochiCase: PortfolioCase = {
   slug: 'spa-sochi',
   sortOrder: 100,
-  title: 'SPA-комплекс Сочи',
+  title: 'СПА-комплекс в Сочи — 210 м²',
   caption: 'SPA-комплекс г. Сочи',
   category: 'spa',
   categoryLabel: 'SPA-комплексы',

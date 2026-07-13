@@ -7,7 +7,7 @@ import type { PortfolioCase } from '../case-types';
 const spaPodmoskovyeCase: PortfolioCase = {
   slug: 'spa-podmoskovye',
   sortOrder: 110,
-  title: 'SPA-комплекс Подмосковье',
+  title: 'СПА-комплекс в Подмосковье — 159 м²',
   caption: 'SPA-комплекс Подмосковье',
   category: 'spa',
   categoryLabel: 'SPA-комплексы',
