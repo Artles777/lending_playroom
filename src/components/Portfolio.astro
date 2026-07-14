@@ -4,7 +4,7 @@ import CaseFolderCard from './CaseFolderCard.astro';
 import CaseModal from './CaseModal.astro';
 import { caseCategories, casePhotosBaseUrl, cases } from '@data/cases';
 
-const encodeDiskPathSegment = (value: string) => value.trim().replaceAll(' ', '%20');
+const encodeDiskPathSegment = (value: string) => value.replaceAll(' ', '%20');
 const initialCategory = caseCategories[0]?.value;
 
 const modalCases = await Promise.all(
