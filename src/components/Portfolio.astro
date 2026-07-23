@@ -2,10 +2,9 @@
 import { getImage } from 'astro:assets';
 import CaseFolderCard from './CaseFolderCard.astro';
 import CaseModal from './CaseModal.astro';
-import { caseCategories, casePhotosBaseUrl, cases } from '@data/cases';
+import { casePhotosBaseUrl, cases } from '@data/cases';
 
 const encodeDiskPathSegment = (value: string) => value.trim().replaceAll(' ', '%20');
-const initialCategory = caseCategories[0]?.value;
 
 const modalCases = await Promise.all(
   cases.map(async (caseItem) => ({
@@ -13,7 +12,7 @@ const modalCases = await Promise.all(
     title: caseItem.title,
     categoryLabel: caseItem.categoryLabel,
     description: caseItem.description,
-    photosUrl: `${casePhotosBaseUrl}/${encodeDiskPathSegment(caseItem.photosFolder)}`,
+    photosUrl: caseItem.photosUrl ?? `${casePhotosBaseUrl}/${encodeDiskPathSegment(caseItem.photosFolder)}`,
     images: await Promise.all(
       caseItem.images.map(async (image, index) => {
         const optimizedImage = await getImage({
@@ -42,21 +41,6 @@ const modalCases = await Promise.all(
       <h2 class="section-title">Проекты,<br />которыми мы&nbsp;<em>гордимся</em></h2>
     </div>
 
-    <div class="portfolio-tabs" role="tablist" aria-label="Тематики кейсов" data-aos="fade-up" data-aos-delay="80">
-      {caseCategories.map((category, index) => (
-        <button
-          class="portfolio-tab"
-          type="button"
-          role="tab"
-          data-portfolio-tab
-          data-category={category.value}
-          aria-selected={index === 0 ? 'true' : 'false'}
-        >
-          {category.label}
-        </button>
-      ))}
-    </div>
-
     <div class="portfolio-gallery" data-portfolio-gallery>
       <button class="portfolio-arrow portfolio-arrow-prev" type="button" data-portfolio-prev aria-label="Предыдущие кейсы">
         ‹
@@ -65,12 +49,7 @@ const modalCases = await Promise.all(
       <div class="portfolio-viewport">
         <div class="portfolio-grid" data-portfolio-grid>
           {cases.map((caseItem) => (
-            <div
-              class="portfolio-slide"
-              data-case-slide
-              data-case-category={caseItem.category}
-              hidden={caseItem.category !== initialCategory}
-            >
+            <div class="portfolio-slide" data-case-slide>
               <CaseFolderCard caseItem={caseItem} />
             </div>
           ))}
@@ -81,8 +60,6 @@ const modalCases = await Promise.all(
         ›
       </button>
     </div>
-
-    <p class="portfolio-empty" data-portfolio-empty hidden>В&nbsp;этой категории кейсов пока нет.</p>
   </div>
 
   <CaseModal cases={modalCases} />
@@ -92,13 +69,11 @@ const modalCases = await Promise.all(
   const portfolios = document.querySelectorAll<HTMLElement>('[data-portfolio]');
 
   portfolios.forEach((portfolio) => {
-    const tabs = [...portfolio.querySelectorAll<HTMLButtonElement>('[data-portfolio-tab]')];
     const slides = [...portfolio.querySelectorAll<HTMLElement>('[data-case-slide]')];
     const track = portfolio.querySelector<HTMLElement>('[data-portfolio-grid]');
     const gallery = portfolio.querySelector<HTMLElement>('[data-portfolio-gallery]');
     const previousButton = portfolio.querySelector<HTMLButtonElement>('[data-portfolio-prev]');
     const nextButton = portfolio.querySelector<HTMLButtonElement>('[data-portfolio-next]');
-    const empty = portfolio.querySelector<HTMLElement>('[data-portfolio-empty]');
     const mobileDragQuery = window.matchMedia('(max-width: 640px)');
     let isPointerDragging = false;
     let hasPointerDragIntent = false;
@@ -146,8 +121,7 @@ const modalCases = await Promise.all(
     const scrollGallery = (direction: number) => {
       if (!track) return;
 
-      const firstVisibleSlide = slides.find((slide) => !slide.hidden);
-      const slideWidth = firstVisibleSlide?.getBoundingClientRect().width || track.clientWidth;
+      const slideWidth = slides[0]?.getBoundingClientRect().width || track.clientWidth;
       const styles = window.getComputedStyle(track);
       const gap = Number.parseFloat(styles.columnGap || styles.gap || '0') || 0;
 
@@ -262,42 +236,6 @@ const modalCases = await Promise.all(
       event.stopPropagation();
     };
 
-    const setActiveCategory = (category = '') => {
-      let visibleCount = 0;
-
-      tabs.forEach((tab) => {
-        const isActive = tab.dataset.category === category;
-        tab.setAttribute('aria-selected', String(isActive));
-      });
-
-      slides.forEach((slide) => {
-        const isVisible = slide.dataset.caseCategory === category;
-        slide.hidden = !isVisible;
-
-        if (isVisible) {
-          visibleCount += 1;
-        }
-      });
-
-      if (empty) {
-        empty.hidden = visibleCount > 0;
-      }
-
-      clearPortfolioDirectionFocus();
-      track?.scrollTo({ left: 0 });
-      window.requestAnimationFrame(updateGalleryControls);
-    };
-
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => setActiveCategory(tab.dataset.category));
-    });
-
-    const activeTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true') || tabs[0];
-
-    if (activeTab) {
-      setActiveCategory(activeTab.dataset.category);
-    }
-
     previousButton?.addEventListener('click', () => scrollGallery(-1));
     nextButton?.addEventListener('click', () => scrollGallery(1));
     gallery?.addEventListener('wheel', handleGalleryWheel, { passive: false, capture: true });
@@ -318,50 +256,6 @@ const modalCases = await Promise.all(
   .portfolio {
     position: relative;
     overflow-x: clip;
-  }
-
-  .portfolio-tabs {
-    display: flex;
-    gap: 10px;
-    margin-top: 34px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: thin;
-  }
-
-  .portfolio-tab {
-    appearance: none;
-    flex: 0 0 auto;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: rgba(255,255,255,0.03);
-    color: var(--muted);
-    cursor: pointer;
-    font-family: var(--font-body);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    line-height: 1.2;
-    padding: 13px 18px;
-    text-transform: uppercase;
-    transition: background 0.25s, border-color 0.25s, color 0.25s;
-    white-space: nowrap;
-  }
-
-  .portfolio-tab:hover {
-    border-color: rgba(255,77,28,0.48);
-    color: var(--text);
-  }
-
-  .portfolio-tab:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-  }
-
-  .portfolio-tab[aria-selected="true"] {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-    color: var(--text);
   }
 
   .portfolio-gallery {
@@ -475,13 +369,6 @@ const modalCases = await Promise.all(
     opacity: 0.36;
   }
 
-  .portfolio-empty {
-    margin-top: 48px;
-    color: var(--muted);
-    font-size: 16px;
-    line-height: 1.7;
-  }
-
   @media (max-width: 1020px) {
     .portfolio-slide {
       flex-basis: calc((100% - 34px) / 2);
@@ -489,11 +376,6 @@ const modalCases = await Promise.all(
   }
 
   @media (max-width: 640px) {
-    .portfolio-tabs {
-      margin-inline: -24px;
-      padding-inline: 24px;
-    }
-
     .portfolio-gallery {
       margin-inline: -24px;
     }

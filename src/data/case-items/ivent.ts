@@ -14,6 +14,7 @@ const iventCase: PortfolioCase = {
   categoryLabel: 'Киберклубы',
   description: 'Проект просторного компьютерного клуба с игровым залом, акцентным светом, навигационными линиями и сценарием под плотный поток гостей.',
   photosFolder: 'Ивент компьютерный клуб 252 кв Наро-Фоминск',
+  photosUrl: 'https://disk.yandex.ru/d/34VDs5hXQfQixA',
   previewImages: [iventHall1, iventHall10, iventHall9],
   images: [iventHall1, iventHall10, iventHall9, iventHall2, iventHall4],
 };

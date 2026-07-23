@@ -1,7 +1,7 @@
 import type { PortfolioCase } from './case-types';
 
-export type { CaseCategory, CaseCategoryItem, PortfolioCase } from './case-types';
-export { caseCategories, casePhotosBaseUrl } from './case-settings';
+export type { CaseCategory, PortfolioCase } from './case-types';
+export { casePhotosBaseUrl } from './case-settings';
 
 type CaseModule = {
   default: PortfolioCase;

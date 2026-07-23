@@ -13,23 +13,13 @@ export const page = 5;
         <div class="review-stars">
           <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
         </div>
-        <p class="review-text">Обратились за&nbsp;полным проектом компьютерного клуба. Команда вникла в&nbsp;специфику с&nbsp;первой встречи — <strong>эргономика, световые зоны, поток гостей</strong>. В&nbsp;итоге получили пространство, где&nbsp;люди сами понимают, куда&nbsp;идти. Выручка на&nbsp;старте выросла заметно — во&nbsp;многом благодаря правильной эргономике. Игроки с&nbsp;удовольствием проводят время в&nbsp;нашем пространстве.</p>
-        <div class="review-author">
-          <div class="review-author-name">Александр К.</div>
-          <div class="review-author-role">Сеть компьютерных клубов GoldGame</div>
-        </div>
-      </div>
-      <div class="review-card" data-aos="fade-up" data-aos-delay="160">
-        <div class="review-stars">
-          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-        </div>
         <p class="review-text">Открывали симуляторный зал — задача нестандартная, много технических ограничений. PlayRoom Studio разработали уникальное световое решение и&nbsp;<strong>мурал под&nbsp;наш бренд</strong>. Проект сдали точно в&nbsp;срок, подрядчики работали по&nbsp;чертежам без&nbsp;единого вопроса к&nbsp;нам.</p>
         <div class="review-author">
           <div class="review-author-name">Михаил Р.</div>
           <div class="review-author-role">Racing Club</div>
         </div>
       </div>
-      <div class="review-card" data-aos="fade-up" data-aos-delay="240">
+      <div class="review-card" data-aos="fade-up" data-aos-delay="160">
         <div class="review-stars">
           <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
         </div>
@@ -51,7 +41,7 @@ export const page = 5;
 
   .reviews-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
     gap: 2px;
     margin-top: 56px;
   }
