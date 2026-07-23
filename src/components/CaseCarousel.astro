@@ -44,6 +44,11 @@
     background: transparent;
   }
 
+  .case-carousel-track :global(figure.is-previous),
+  .case-carousel-track :global(figure.is-next) {
+    cursor: pointer;
+  }
+
   .case-carousel-track :global(.case-carousel-slide-inner) {
     width: 100%;
     aspect-ratio: var(--case-slide-ratio, 4 / 5);
@@ -63,6 +68,20 @@
     border-color: rgba(255,77,28,0.46);
     box-shadow: 0 28px 70px rgba(0,0,0,0.42);
     transform: scale(1);
+  }
+
+  .case-carousel-track :global(figure.is-previous:hover .case-carousel-slide-inner),
+  .case-carousel-track :global(figure.is-next:hover .case-carousel-slide-inner),
+  .case-carousel-track :global(figure.is-previous:focus-visible .case-carousel-slide-inner),
+  .case-carousel-track :global(figure.is-next:focus-visible .case-carousel-slide-inner) {
+    opacity: 0.68;
+    border-color: rgba(255,77,28,0.56);
+  }
+
+  .case-carousel-track :global(figure.is-previous:focus-visible),
+  .case-carousel-track :global(figure.is-next:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: -4px;
   }
 
   .case-carousel-track :global(figure.is-loop-before:not(.is-active) .case-carousel-slide-inner) {

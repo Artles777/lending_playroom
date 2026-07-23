@@ -171,14 +171,30 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
     const count = slides.length;
     const selectedIndex = emblaApi.selectedScrollSnap();
     const previousIndex = emblaApi.previousScrollSnap();
+    const previousSlideIndex = emblaApi.canScrollPrev() ? (selectedIndex - 1 + count) % count : -1;
+    const nextSlideIndex = emblaApi.canScrollNext() ? (selectedIndex + 1) % count : -1;
 
     slides.forEach((slide, index) => {
       const isLoopBefore = count > 1 && selectedIndex === 0 && index === count - 1;
       const isLoopAfter = count > 1 && selectedIndex === count - 1 && index === 0;
+      const isPrevious = index === previousSlideIndex;
+      const isNext = index === nextSlideIndex;
 
       slide.classList.toggle('is-active', index === selectedIndex);
+      slide.classList.toggle('is-previous', isPrevious);
+      slide.classList.toggle('is-next', isNext);
       slide.classList.toggle('is-loop-before', isLoopBefore);
       slide.classList.toggle('is-loop-after', isLoopAfter);
+
+      if (isPrevious || isNext) {
+        slide.setAttribute('tabindex', '0');
+        slide.setAttribute('role', 'button');
+        slide.setAttribute('aria-label', isPrevious ? 'Показать предыдущее фото' : 'Показать следующее фото');
+      } else {
+        slide.setAttribute('tabindex', '-1');
+        slide.removeAttribute('role');
+        slide.removeAttribute('aria-label');
+      }
     });
 
     counter.textContent = count > 0 ? `${selectedIndex + 1} / ${count}` : '0 / 0';
@@ -284,6 +300,21 @@ const casesJson = JSON.stringify(cases).replace(/</g, '\\u003c');
       img.height = image.height;
       img.loading = index === 0 ? 'eager' : 'lazy';
       img.decoding = 'async';
+
+      const navigateFromSlide = () => {
+        if (figure.classList.contains('is-previous')) {
+          goToSlide(-1);
+        } else if (figure.classList.contains('is-next')) {
+          goToSlide(1);
+        }
+      };
+
+      figure.addEventListener('click', navigateFromSlide);
+      figure.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        navigateFromSlide();
+      });
 
       frame.append(img);
       figure.append(frame);
