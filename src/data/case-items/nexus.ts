@@ -8,12 +8,12 @@ import type { PortfolioCase } from '../case-types';
 const nexusCase: PortfolioCase = {
   slug: 'nexus',
   sortOrder: 10,
-  title: 'NEXUS',
-  caption: 'NEXUS компьютерный клуб',
+  title: 'Компьютерный клуб Nexus — 150 м²',
+  caption: 'Nexus компьютерный клуб',
   category: 'cyber',
   categoryLabel: 'Киберклубы',
-  description: 'Проект компьютерного клуба NEXUS с просторной игровой зоной, выразительным неоновым светом и лаунж-пространствами для отдыха.',
-  photosFolder: 'Нексус для лендинга',
+  description: 'Проект компьютерного клуба Nexus площадью 150 м² в Мурманске.',
+  photosFolder: 'Компьютерный клуб Nexus 150кв.м. Мурманск',
   photosUrl: 'https://disk.yandex.ru/d/7mj0pDvOcVkPwg',
   previewImages: [nexusGameZone, nexusLoungeWarrior, nexusVipLounge],
   images: [
