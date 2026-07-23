@@ -1,8 +1,8 @@
-import nexus3010 from '@assets/images/nexus-3010.jpeg';
-import nexus3011 from '@assets/images/nexus-3011.jpeg';
-import nexus3012 from '@assets/images/nexus-3012.jpeg';
-import nexus3013 from '@assets/images/nexus-3013.jpeg';
-import nexus3014 from '@assets/images/nexus-3014.jpeg';
+import nexusGameHall from '@assets/images/nexus-game-hall.jpg';
+import nexusGameZone from '@assets/images/nexus-game-zone.jpg';
+import nexusLoungeCyberpunk from '@assets/images/nexus-lounge-cyberpunk.png';
+import nexusLoungeWarrior from '@assets/images/nexus-lounge-warrior.png';
+import nexusVipLounge from '@assets/images/nexus-vip-lounge.jpg';
 import type { PortfolioCase } from '../case-types';
 
 const nexusCase: PortfolioCase = {
@@ -14,8 +14,15 @@ const nexusCase: PortfolioCase = {
   categoryLabel: 'Киберклубы',
   description: 'Проект компьютерного клуба Nexus площадью 150 м² в Мурманске.',
   photosFolder: 'Компьютерный клуб Nexus 150кв.м. Мурманск',
-  previewImages: [nexus3011, nexus3012, nexus3010],
-  images: [nexus3011, nexus3012, nexus3010, nexus3013, nexus3014],
+  photosUrl: 'https://disk.yandex.ru/d/7mj0pDvOcVkPwg',
+  previewImages: [nexusGameZone, nexusLoungeWarrior, nexusVipLounge],
+  images: [
+    nexusGameZone,
+    nexusLoungeWarrior,
+    nexusGameHall,
+    nexusVipLounge,
+    nexusLoungeCyberpunk,
+  ],
 };
 
 export default nexusCase;
